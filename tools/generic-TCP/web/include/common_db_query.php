@@ -19,6 +19,65 @@ function delLastChar($string="")
   $t = substr($string, 0, -1);
   return($t);
 }
+// Get values from database for selected spindle, between now and timeframe in hours ago
+function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset, $var1='Angle', $var2='', $var3='')
+{
+   if ($reset)
+   {
+   $where="WHERE Name = '".$iSpindleID."' 
+                  AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
+   }  
+   else
+   {
+  $where ="WHERE Name = '".$iSpindleID."' 
+            AND Timestamp >= date_sub(NOW(), INTERVAL ".$timeFrameHours." HOUR) 
+            and Timestamp <= NOW()";
+   }  
+   $var2 != '' ? $var2sel = ','.$var2 : $var2sel = '';
+   $var3 != '' ? $var3sel = ','.$var3 : $var3sel = '';
+   
+   $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, $var1" . $var2sel  . $var3sel
+                         ." FROM Data " 
+                         .$where 
+                         ." ORDER BY Timestamp ASC") or die(mysql_error());
+
+  // retrieve number of rows
+  $rows = mysql_num_rows($q_sql);
+  if ($rows > 0)
+  {
+    $val1 = '';
+    $val2 = '';
+    $val3 = '';
+    
+    // retrieve and store the values as CSV lists for HighCharts
+    while($r_row = mysql_fetch_array($q_sql))
+    {
+      $jsTime = $r_row['unixtime'] * 1000;
+      $val1         .= '['.$jsTime.', '.$r_row[$var1].'],';
+      if ($var2 != '') {
+        $val2         .= '['.$jsTime.', '.$r_row[$var2].'],';
+      }
+      if ($var3 != '') {
+        $val3         .= '['.$jsTime.', '.$r_row[$var3].'],';
+      }
+    }
+    
+    // remove last comma from each CSV
+    $val1         = delLastChar($val1);
+    $val2         = delLastChar($val2);
+    $val3         = delLastChar($val3);
+    
+    if ($var2 != '' and $var3 == '') {
+      return array($val1, $val2);
+    }
+    else if ($var2 != '' and $var3 != '') {
+      return array($val1, $val2, $val3);
+    }
+    else {
+       return array($val1);
+    }   
+  }
+}
  
 // Get values from database for selected spindle, between now and timeframe in hours ago
 function getChartValues($iSpindleID='iSpindel000', $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
