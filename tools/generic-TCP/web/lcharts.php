@@ -73,7 +73,6 @@ if ($varNo == 2) {
 }
 ?>
 
-// ToDo: style, html-header auslagern
 <!DOCTYPE html>
 <html>
   <head>
