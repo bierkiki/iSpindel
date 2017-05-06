@@ -128,6 +128,7 @@ $(function ()
         timezone: 'Europe/Berlin'
       },
       lang: {
+        shortMonths: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']
       },
     });
        
