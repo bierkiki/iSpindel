@@ -19,7 +19,7 @@
 // ****************************************************************************
 // ToDo: style, html-header auslagern
 // ToDo: kein chart, wenn Variable doppelt
-// ToDo: Schleife fÃ¼r $var1, $var2, $var3
+// ToDo: Schleife für $var1, $var2, $var3
 // ToDo: Superglobals ($_GET['hours'], ...) nicht zugreifen
 // ToDo: Legende rechts oben, Punkte (vgl. Ubidots)
 // ****************************************************************************

@@ -1,5 +1,5 @@
 <?php
-// Skript stellt die FunktionalitÃ¤t von plato.php nach
+// Skript stellt die Funktionalität von plato.php nach
 $host = htmlspecialchars($_SERVER['HTTP_HOST']);
 $path = substr(htmlspecialchars($_SERVER['SCRIPT_NAME']), 1, strlen(htmlspecialchars($_SERVER['SCRIPT_NAME']))-11);
 $parm = 'var1=Gravity&var2=Temperature';

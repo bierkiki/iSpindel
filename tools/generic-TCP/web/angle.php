@@ -1,5 +1,5 @@
 <?php
-// Skript stellt die Funktionalität von angle.php nach
+// Skript stellt die Funktionalität von angle.php nach 
 $host = htmlspecialchars($_SERVER['HTTP_HOST']);
 $path = substr(htmlspecialchars($_SERVER['SCRIPT_NAME']), 1, strlen(htmlspecialchars($_SERVER['SCRIPT_NAME']))-11);
 $parm = 'var1=Angle&var2=Temperature';
