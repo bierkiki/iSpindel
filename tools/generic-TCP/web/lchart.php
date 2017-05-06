@@ -1,15 +1,32 @@
 <?php
+/* 
+  Show the linechart with 2 variables
+  GET Parameters:
+  hours = number of hours before now() to be displayed
+  name = iSpindle name
+  reset = true, false defines start of timeline
+  var1  = Name of first variable for left y-axis
+  var2  = Name of second variable for right y-axis, optional
+  
+  Shows mySQL iSpindle data on the browser as a graph via Highcharts:
+  http://www.highcharts.com
+ 
+  For the original project itself, see: https://github.com/universam1/iSpindel  
 
-// Show the linechart with 2 variables
-// GET Parameters:
-// hours = number of hours before now() to be displayed
-// name = iSpindle name
-// reset = true, false defines start of timeline
-// var1  = Name of first variable for left y-axis
-// var2  = Name of second variable for right y-axis, optional
+  kiki, May 06 2017
+*/
+
+// ****************************************************************************
+// ToDo: style, html-header auslagern
+// ToDo: kein chart, wenn Variable doppelt
+// ToDo: Schleife fÃ¼r $var1, $var2, $var3
+// ToDo: Superglobals ($_GET['hours'], ...) nicht zugreifen
+// ToDo: Legende rechts oben, Punkte (vgl. Ubidots)
+// ****************************************************************************
  
 include_once("include/common_db.php");
 include_once("include/common_db_query.php");
+include_once("include/common_frontend.php");
 
 // Check GET parameters (for now: Spindle name and Timeframe to display)
 if (!isset($_GET['hours'])) {$_GET['hours'] = defaultTimePeriod;} else {$_GET['hours'] = $_GET['hours'];}
@@ -30,40 +47,9 @@ if ($_GET['var2'] == '') {
     $varNo = 2;
   }
 
-// check variables:
-// array of known fields and their names, formats, ...:
-$dictArray = array(
-    'Angle' => array(
-        'txtDE' => 'Winkel [°]',
-        'Einheit' => '°'
-    ),
-    'Temperature' => array(
-        'txtDE' => 'Temperatur [°C]',
-        'Einheit' => '°C'
-    )
-);
-// if new, add variable to $dictArray :
-$knownVar = array('Angle', 'Temperature');
-if (!in_array($_GET['var1'], $knownVar, true)) {
-  $newDict1 = array(
-    $_GET['var1'] => array(
-                      'txtDE' => $_GET['var1'],
-                      'Einheit' => ''
-                     )
-  );
-  $dictArray = $dictArray + $newDict1;
-}
-if ($varNo > 1) {
-  if (!in_array($_GET['var2'], $knownVar, true) and $_GET['var1'] != $_GET['var2']) {
-    $newDict2 = array(
-      $_GET['var2'] => array(
-                        'txtDE' => $_GET['var2'],
-                        'Einheit' => ''
-                       )
-    );
-    $dictArray = $dictArray + $newDict2;
-  }
-}
+// check, whether variables are known:
+check_known_variable($_GET['var1']); 
+check_known_variable($_GET['var2']); 
 
 // Database query:
 if ($varNo > 1) list($var1, $var2) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'],$_GET['var1'],$_GET['var2']);
@@ -82,10 +68,7 @@ else list($var1) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'],$_GET
   <script src="include/moment-timezone-with-data.js"></script>
 
   <link rel="stylesheet" href="./css/fonts.css" type="text/css"/>
-  <script src="include/highcharts.js"></script>
-
-  <link rel="stylesheet" href="./css/iSpindel.css" type="text/css"/>
-
+  
   <style>
     html {
       font-family: "Open Sans", "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
@@ -141,10 +124,11 @@ $(function ()
   $(document).ready(function() 
   { 
     Highcharts.setOptions({
-
+      global: {
+        timezone: 'Europe/Berlin'
+      },
       lang: {
-        shortMonths: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun',  'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']
-      }
+      },
     });
        
     chart = new Highcharts.Chart(
@@ -299,10 +283,8 @@ $(function ()
     <img src="./img/iSpindel.svg" height="40px">
           iSpindel: DIY elektronische Bierspindel
     </div>    
-
- 
+  <script src="include/highcharts.js"></script>
   <div id="container" ></div>
 
- 
 </body>
 </html>

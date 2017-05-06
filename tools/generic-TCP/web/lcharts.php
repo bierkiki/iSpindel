@@ -1,15 +1,33 @@
 <?php
-// Show up to 3 linecharts
-// GET Parameters:
-// hours = number of hours before now() to be displayed
-// name = iSpindle name
-// reset = true, false defines start of timeline
-// var1  = Name of first variable for first chart
-// var2  = Name of variable for second chart
-// var3  = Name of variable for third chart
+/* 
+  Show up to 3 linecharts
+  GET Parameters:
+  hours = number of hours before now() to be displayed
+  name = iSpindle name
+  reset = true, false defines start of timeline
+  var1  = Name of first variable for first chart
+  var2  = Name of variable for second chart
+  var3  = Name of variable for third chart
+  
+  Shows mySQL iSpindle data on the browser as a graph via Highcharts:
+  http://www.highcharts.com
+ 
+  For the original project itself, see: https://github.com/universam1/iSpindel  
+
+  kiki, May 06 2017
+*/
+
+// ****************************************************************************
+// ToDo: style, html-header auslagern
+// ToDo: kein chart, wenn Variable doppelt
+// ToDo: Schleife fÃ¼r $var1, $var2, $var3
+// ToDo: Superglobals ($_GET['hours'], ...) nicht zugreifen
+// ToDo: Legende rechts oben, Punkte (vgl. Ubidots)
+// ****************************************************************************
 
 include_once("include/common_db.php");
 include_once("include/common_db_query.php");
+include_once("include/common_frontend.php");
 
 // Check GET parameters
 if (!isset($_GET['hours'])) {$_GET['hours'] = defaultTimePeriod;} else {$_GET['hours'] = $_GET['hours'];}
@@ -19,6 +37,9 @@ if (!isset($_GET['var1']))  {$_GET['var1'] = defaultVar;}         else {$_GET['v
 if (!isset($_GET['var2']))  {$_GET['var2'] = '';}                 else {$_GET['var2']  = $_GET['var2'];}
 if (!isset($_GET['var3']))  {$_GET['var3'] = '';}                 else {$_GET['var3']  = $_GET['var3'];}
 
+//
+// ToDo: kein chart, wenn Variable doppelt
+//
 // Number of linecharts:
 // check var1, default is Angle
 if ($_GET['var1'] == '') {
@@ -36,103 +57,10 @@ if ($_GET['var2'] == '') {
   }
 }
 
-// check variables:
-// array of known fields and their names, formats, ...:
-$dictArray = array(
-    'Angle' => array(
-        'txtDE' => 'Winkel [°]',
-        'Einheit' => '°'
-    ),
-    'Temperature' => array(
-        'txtDE' => 'Temperatur [°C]',
-        'Einheit' => '°C'
-    ),
-    'Battery' => array(
-        'txtDE' => 'Batteriespannung [V]',
-        'Einheit' => 'V'
-    ),
-    'Gravity' => array(
-            'txtDE' => 'Restextrakt [°P]',
-            'Einheit' => '°P'
-    )
-);
-// if new, add variable to $dictArray :
-$knownVar = array('Angle', 'Temperature');
-if (!in_array($_GET['var1'], $knownVar, true)) {
-  $newDict1 = array(
-      $_GET['var1'] => array(
-          'txtDE' => $_GET['var1'],
-          'Einheit' => ''
-      )
-  );
-  $dictArray = $dictArray + $newDict1;
-};
-if ($varNo > 1) {
-  if (!in_array($_GET['var2'], $knownVar, true) and $_GET['var1'] != $_GET['var2']) {
-    $newDict2 = array(
-        $_GET['var2'] => array(
-            'txtDE' => $_GET['var2'],
-            'Einheit' => ''
-        )
-    );
-    $dictArray = $dictArray + $newDict2;
-  }
-}
-if ($varNo > 2) {
-  if (!in_array($_GET['var3'], $knownVar, true) and $_GET['var1'] != $_GET['var3'] and $_GET['var2'] != $_GET['var3']) {
-    $newDict3 = array(
-        $_GET['var3'] => array(
-            'txtDE' => $_GET['var3'],
-            'Einheit' => ''
-        )
-    );
-    $dictArray = $dictArray + $newDict3;
-  }
-}
-
-function lchartTmpl($renderTo, $txtDE, $Einheit, $var) {
-  $tmpl = "
-      $('#" . $renderTo . "').highcharts({
-        chart:{
-          renderTo: '" . $renderTo . "'
-        },
-        yAxis: [{
-          title:{
-            text :'" . $txtDE . "'
-          },
-          labels: {
-            formatter: function(){
-              return this.value +'" . $Einheit . "'
-            }
-          }
-        }],
-        tooltip:{
-          formatter: function(){
-            if(this.series.name == '" . $txtDE . "') {
-              return '<b>" . $txtDE . "</b> um '+ Highcharts.dateFormat('%H:%M', new Date(this.x)) +' Uhr:  '+ this.y + '" . $Einheit . "';
-            }
-          }
-        },
-        series:[{
-          name: '" . $txtDE . "'   ,
-          data: [" . $var . "],
-          color: '#C31028',
-          marker:{
-            symbol: 'square',
-            enabled: false,
-            states:{
-              hover:{
-                symbol: 'square',
-                enabled: true,
-                radius: 8
-              }
-            }
-          }
-        }]
-      });
-      ";
-  return $tmpl;
-}
+// check, whether variables are known:
+check_known_variable($_GET['var1']); 
+check_known_variable($_GET['var2']); 
+check_known_variable($_GET['var3']); 
 
 // Database query:
 if ($varNo == 3) {
@@ -145,6 +73,7 @@ if ($varNo == 2) {
 }
 ?>
 
+// ToDo: style, html-header auslagern
 <!DOCTYPE html>
 <html>
   <head>
@@ -280,6 +209,7 @@ if ($varNo == 2) {
       iSpindel: DIY elektronische Bierspindel
     </div>
 
+    <script src="include/highcharts.js"></script>
     <?php
     for ($i = 1; $i <= 3; $i++) {
       if ($varNo >= $i) {

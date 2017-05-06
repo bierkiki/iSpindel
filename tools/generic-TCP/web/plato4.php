@@ -5,12 +5,16 @@
 // hours = number of hours before now() to be displayed
 // name = iSpindle name
  
+// ****************************************************************************
+// ToDo: Plato4-Berechnung in DB verlagern und Redirect auf lchart.php
+// ****************************************************************************
+ 
 include_once("include/common_db.php");
 include_once("include/common_db_query.php");
 
 // Check GET parameters (for now: Spindle name and Timeframe to display) 
 if(!isset($_GET['hours'])) $_GET['hours'] = defaultTimePeriod; else $_GET['hours'] = $_GET['hours'];
-if(!isset($_GET['name'])) $_GET['name'] = 'iSpindel000'; else $_GET['name'] = $_GET['name'];
+if(!isset($_GET['name'])) $_GET['name'] = defaultName; else $_GET['name'] = $_GET['name'];
 if(!isset($_GET['reset'])) $_GET['reset'] = defaultReset; else $_GET['reset'] = $_GET['reset'];
 
 list($isCalib, $dens, $temperature, $angle) = getChartValuesPlato4($_GET['name'], $_GET['hours'], $_GET['reset']);
@@ -27,6 +31,57 @@ list($isCalib, $dens, $temperature, $angle) = getChartValuesPlato4($_GET['name']
   <script src="include/jquery-3.1.1.min.js"></script>
   <script src="include/moment.min.js"></script>
   <script src="include/moment-timezone-with-data.js"></script>
+
+  <link rel="stylesheet" href="./css/fonts.css" type="text/css"/>
+
+  <style>
+    html {
+      font-family: "Open Sans", "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+      background:#5e5e5e;
+      color: #5e5e5e;
+    }
+    #header {
+      font-size: 25px;
+      margin-top: 10px;
+      margin-left: 1%;
+      margin-right: 1%;
+      height:50px;    
+      padding-top: 10px;
+      padding-left: 10px;
+      background:#93E579;
+      border-radius: 7px;
+    }
+    #footer {
+      font-size: 25px;
+      margin-top: 10px;
+            margin-left: 1%;
+            margin-right: 1%;
+            height:50px;    
+            padding-top: 10px;
+            padding-left: 10px;
+            background:#93E579;
+      border-radius: 7px;
+    }
+    #container {
+      font-size: 15px;
+      margin-top: 10px;
+      margin-left: 1%;
+      margin-right: 1%;
+      height:100%;
+      position:relative;
+     
+    }
+
+    .highcharts-root{
+      border-radius: 7px;}
+
+    .highcharts-title {
+      fill: #5e5e5e  !Important;
+    }
+  
+  </style>
+  
+
 
 <script type="text/javascript">
 $(function () 
@@ -45,7 +100,10 @@ $(function ()
         Highcharts.setOptions({
               global: {
                   timezone: 'Europe/Berlin'
-              }
+              },
+             lang: {
+                  shortMonths: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun',  'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']
+             }
           });
                 
         chart = new Highcharts.Chart(
@@ -56,9 +114,10 @@ $(function ()
             },
             title:
             {
-                text: 'iSpindel: <?php echo $_GET['name'];?>'
+                text: '<?php echo $_GET['name'];?>',
+                align: 'left'
             },
-            subtitle:
+            /*subtitle:
             {
               text: ' <?php               
                          if($_GET['reset']) 
@@ -69,9 +128,9 @@ $(function ()
                          {
                             echo 'Temperatur und Restextrakt den letzten '.  $_GET['hours'] .  ' Stunden';
                          }
-                      ?>
-                    '
-            },
+                      ?>',
+              align: 'left'
+            },*/
             xAxis:
             {
                 type: 'datetime',
@@ -85,8 +144,8 @@ $(function ()
                 {
                     startOnTick: false,
                     endOnTick: false,
-                    min: 0,
-                    max: 25,
+                    /*min: 0,
+                    max: 25,*/
                     title:
                     {
                         text: 'Extrakt %w/w'
@@ -106,8 +165,8 @@ $(function ()
                     // linkedTo: 0,
                     startOnTick: false,
                     endOnTick: false,
-                    min: -5,
-                    max: 35,
+                    /*min: -5,
+                    max: 35,*/
                     gridLineWidth: 0,
                     opposite: true,
                     title: {
@@ -196,9 +255,14 @@ $(function ()
 </head>
 <body>
  
+  <div id="header">
+    <img src="./img/iSpindel.svg" height="40px">
+          iSpindel: DIY elektronische Bierspindel
+    </div>    
+
 <div id="wrapper">
   <script src="include/highcharts.js"></script>
-  <div id="container" style="width:98%; height:98%; position:absolute"></div>
+  <div id="container"></div>
 </div>
  
 </body>

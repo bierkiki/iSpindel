@@ -1,5 +1,4 @@
 <?php
-
 /* 
   Visualizer for iSpindle using genericTCP with mySQL 
   Shows mySQL iSpindle data on the browser as a graph via Highcharts:
@@ -10,15 +9,28 @@
   For the original project itself, see: https://github.com/universam1/iSpindel  
   
   Tozzi (stephan@sschreiber.de), Mar 15 2017
+  kiki, May 06 2017
 */
 
+// ****************************************************************************
+// ToDo: Abfrage auf reset nicht richtig, wenn default = true (boolean <-> gefüllt)
+// ToDo: function getChartValues, getChartValuesPlato entfernen
+// ToDo: function getCurrentValues parametergesteurt
+// ToDo: Plato4-Berechnung in DB verlagern und getValues verwenden
+// ****************************************************************************
 
+// ****************************************************************************
+//
+// ****************************************************************************
 // remove last character from a string
 function delLastChar($string="")
 {
   $t = substr($string, 0, -1);
   return($t);
 }
+// ****************************************************************************
+//
+// ****************************************************************************
 // Get values from database for selected spindle, between now and timeframe in hours ago
 function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset, $var1='Angle', $var2='', $var3='')
 {
@@ -40,7 +52,6 @@ function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $
                          ." FROM Data " 
                          .$where 
                          ." ORDER BY Timestamp ASC") or die(mysql_error());
-
   // retrieve number of rows
   $rows = mysql_num_rows($q_sql);
   if ($rows > 0)
@@ -79,13 +90,16 @@ function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $
   }
 }
  
+// ****************************************************************************
+//
+// ****************************************************************************
 // Get values from database for selected spindle, between now and timeframe in hours ago
-function getChartValues($iSpindleID='iSpindel000', $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
+function getChartValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
 {
    if ($reset)
    {
    $where="WHERE Name = '".$iSpindleID."' 
-                  AND Timestamp >= (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
+                  AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
    }  
    else
    {
@@ -119,14 +133,16 @@ function getChartValues($iSpindleID='iSpindel000', $timeFrameHours=defaultTimePe
     return array($valAngle, $valTemperature);
   }
 }
-
+// ****************************************************************************
+//
+// ****************************************************************************
 // Get values from database including gravity (Fw 5.0.1 required) for selected spindle, between now and timeframe in hours ago
-function getChartValuesPlato($iSpindleID='iSpindel000', $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
+function getChartValuesPlato($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
 {
    if ($reset)
    {
    $where="WHERE Name = '".$iSpindleID."' 
-                  AND Timestamp >= (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
+                  AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
    }  
    else
    {
@@ -138,7 +154,6 @@ function getChartValuesPlato($iSpindleID='iSpindel000', $timeFrameHours=defaultT
                           FROM Data " 
                          .$where 
                          ." ORDER BY Timestamp ASC") or die(mysql_error());
-
   // retrieve number of rows
   $rows = mysql_num_rows($q_sql);
   if ($rows > 0)
@@ -146,7 +161,6 @@ function getChartValuesPlato($iSpindleID='iSpindel000', $timeFrameHours=defaultT
     $valAngle = '';
     $valTemperature = '';
     $valGravity = '';
-
     // retrieve and store the values as CSV lists for HighCharts
     while($r_row = mysql_fetch_array($q_sql))
     {
@@ -155,7 +169,6 @@ function getChartValuesPlato($iSpindleID='iSpindel000', $timeFrameHours=defaultT
       $valTemperature   .= '['.$jsTime.', '.$r_row['temperature'].'],';
       $valGravity       .= '['.$jsTime.', '.$r_row['gravity'].'],';
     }
-
     // remove last comma from each CSV
     $valAngle         = delLastChar($valAngle);
     $valTemperature   = delLastChar($valTemperature);
@@ -163,9 +176,11 @@ function getChartValuesPlato($iSpindleID='iSpindel000', $timeFrameHours=defaultT
     return array($valAngle, $valTemperature, $valGravity);
   }
 }
-
+// ****************************************************************************
+//
+// ****************************************************************************
 // Get current values (angle, temperature, battery)
-function getCurrentValues($iSpindleID='iSpindel000')
+function getCurrentValues($iSpindleID=defaultName)
 {
    $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, temperature, angle, battery
                 FROM Data
@@ -184,9 +199,12 @@ function getCurrentValues($iSpindleID='iSpindel000')
   }
 }
                         
+// ****************************************************************************
+//
+// ****************************************************************************
 // Get calibrated values from database for selected spindle, between now and [number of hours] ago
 // Old Method for Firmware before 5.x
-function getChartValuesPlato4($iSpindleID='iSpindel000', $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
+function getChartValuesPlato4($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
 {
     $isCalibrated = 0;  // is there a calbration record for this iSpindle?
     $valAngle = '';
@@ -198,7 +216,7 @@ function getChartValuesPlato4($iSpindleID='iSpindel000', $timeFrameHours=default
    if ($reset)
    {
    $where="WHERE Name = '".$iSpindleID."' 
-                  AND Timestamp >= (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
+                  AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
    }  
    else
    {
