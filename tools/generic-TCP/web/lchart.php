@@ -102,9 +102,9 @@ else list($var1) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'],$_GET
       margin-top: 10px;
       margin-left: 1%;
       margin-right: 1%;
-      height:100%;
-      position:relative;
-     
+      width:96%;
+      height:86%;
+      position:absolute;
     }
 
     .highcharts-root{
