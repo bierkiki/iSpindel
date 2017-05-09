@@ -3,7 +3,7 @@
 include_once("include/common_db_query.php");
 
 // Check GET parameters 
-if(!isset($_GET['name'])) $_GET['name'] = 'iSpindel000'; else $_GET['name'] = $_GET['name'];
+if(!isset($_GET['name'])) $_GET['name'] = defaultName; else $_GET['name'] = $_GET['name'];
 
 
 $Name = $_GET['name'];
