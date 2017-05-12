@@ -15,7 +15,8 @@ if(is_resource($conn))
 }
  
 define("defaultTimePeriod", 24); // Timeframe for chart
-define("defaultReset",  false);  // Flag for Timeframe for chart, 
+define("defaultReset",  0);  // Flag for Timeframe for chart, 
 define("defaultName", 'iSpindel000');  // Flag for Timeframe for chart, 
 define("defaultVar", 'Angle');  // Variable to be displayed
+define("defaultBox", 0);              // Flag, whether boxes are displayed
 ?>

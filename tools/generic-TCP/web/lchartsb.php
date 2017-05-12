@@ -9,13 +9,14 @@
   var2  : Name of variable for second chart
   var3  : Name of variable for third chart
   box   : 1 (with boxes with current value) or 0 (no boxes)
+  date  : Datum (TT.MM.YYYY): timeline of chart is from max reset-timestamp < date to min reset-timestamp < date
 
   Shows mySQL iSpindle data on the browser as a graph via Highcharts:
   http://www.highcharts.com
 
   For the original project itself, see: https://github.com/universam1/iSpindel
 
-  kiki, May 09 2017
+  kiki, May 10 2017
  */
 
 // ****************************************************************************
@@ -23,7 +24,6 @@
 // erste Vorabversion !!!!
 //
 // ToDo: siehe lchart.php
-// defaultbox in common_db.php aufnehmen
 // ****************************************************************************
 
 include_once("include/common_db.php");
@@ -32,12 +32,14 @@ include_once("include/common_frontend.php");
 
 // Check GET parameters
 if (!isset($_GET['hours'])) {$_GET['hours'] = defaultTimePeriod;} else {$_GET['hours'] = $_GET['hours'];}
-if (!isset($_GET['name']))  {$_GET['name'] = defaultName;}        else {$_GET['name']  = $_GET['name'];}
+if (!isset($_GET['name']))  {$_GET['name']  = defaultName;}       else {$_GET['name']  = $_GET['name'];}
 if (!isset($_GET['reset'])) {$_GET['reset'] = defaultReset;}      else {$_GET['reset'] = $_GET['reset'];}
-if (!isset($_GET['var1']))  {$_GET['var1'] = defaultVar;}         else {$_GET['var1']  = $_GET['var1'];}
-if (!isset($_GET['var2']))  {$_GET['var2'] = '';}                 else {$_GET['var2']  = $_GET['var2'];}
-if (!isset($_GET['var3']))  {$_GET['var3'] = '';}                 else {$_GET['var3']  = $_GET['var3'];}
-if (!isset($_GET['box' ]))  {$_GET['box'] = '1';}                 else {$_GET['box']   = $_GET['box'];}
+if (!isset($_GET['var1']))  {$_GET['var1']  = defaultVar;}        else {$_GET['var1']  = $_GET['var1'];}
+if (!isset($_GET['var2']))  {$_GET['var2']  = '';}                else {$_GET['var2']  = $_GET['var2'];}
+if (!isset($_GET['var3']))  {$_GET['var3']  = '';}                else {$_GET['var3']  = $_GET['var3'];}
+if (!isset($_GET['box' ]))  {$_GET['box']   = defaultBox;}        else {$_GET['box']   = $_GET['box'];}
+if (!isset($_GET['date' ])) {$_GET['date']  = '';}                else {$_GET['date']  = $_GET['date'];}
+
 //
 // ToDo: kein chart, wenn Variable doppelt
 //
@@ -65,12 +67,12 @@ check_known_variable($_GET['var3']);
 
 // Database query:
 if ($varNo == 3) {
-  list($var1, $var2, $var3) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['var1'], $_GET['var2'], $_GET['var3']);
+  list($var1, $var2, $var3) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['var1'], $_GET['var2'], $_GET['var3']);
 } else
 if ($varNo == 2) {
-  list($var1, $var2) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['var1'], $_GET['var2']);
+  list($var1, $var2) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['var1'], $_GET['var2']);
 } else {
-  list($var1) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['var1']);
+  list($var1) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['var1']);
 }
 ?>
 
@@ -94,36 +96,31 @@ if ($varNo == 2) {
         color: #5e5e5e;
       }
       #header {
-        font-size: 25px;
         margin-top: 10px;
         margin-left: 1%;
         margin-right: 1%;
         height:50px;
+        font-size: 25px;
         padding-top: 10px;
-        padding-left: 10px;
+        padding-left: 25px;
         background:#93E579;
         border-radius: 7px;
-      }
-      #header_right {
-        float:right;
-        margin-right: 2%;
       }
       #footer {
-        font-size: 25px;
         margin-top: 10px;
         margin-left: 1%;
         margin-right: 1%;
-        height:50px;
-        padding-top: 10px;
-        padding-left: 10px;
+        font-size: 25px;
+        padding: 7px 25px 7px 25px;
         background:#93E579;
-        border-radius: 7px;
+        border-radius: 7px;        
       }
       .wrapper {
         padding-top: 1%;
         margin-left: 1%;
         margin-right: 1%;
         height:100%;
+
       }
       .spacer {
         height: 10px;
@@ -135,7 +132,10 @@ if ($varNo == 2) {
         width:99%;
         display: flex;
       }
-
+      a {color:#5e5e5e;
+         text-decoration: none;
+         float:right;
+      }
       .box {
         margin-top: 1%;
         height:200px;
@@ -156,7 +156,7 @@ if ($varNo == 2) {
         border-radius: 7px  7px 0 0;
       }
       .box >p, .box_left>p, .box_right >p{
-        margin-left: 10%;
+        margin-left: 25px;
       }
 
       .clear {
@@ -174,7 +174,8 @@ if ($varNo == 2) {
       }
       .highcharts-title {
         fill: #5e5e5e  !Important;
-      }
+      }      
+
     </style>
 
 
@@ -199,18 +200,12 @@ if ($varNo == 2) {
             xAxis: {
               type: 'datetime',
               gridLineWidth: 1
-              /*,
-              title: {
-                text: 'Uhrzeit'
-              }
-                */
             },
 
             yAxis: [{
-                startOnTick: false,
-                endOnTick: false,
-                /*min: 0,
-                 max: 90,*/
+                startOnTick: true,
+                endOnTick: true,
+                gridLineWidth: 1,
                 labels: {
                   align: 'left',
                   x: 3,
@@ -222,7 +217,7 @@ if ($varNo == 2) {
               crosshairs: [true, true]
             },
             legend: {
-              enabled: false /* true */
+              enabled: false
             },
             credits: {
               enabled: false
@@ -248,49 +243,50 @@ if ($varNo > 2) {
       // Update the count down every 1 second
       var x = setInterval(function () {
 
-        // Find the distance between now an the count down date
-        var distance = new Date().getTime()
-                - <?php $last = substr($var1, strrpos($var1, "["), 20);
+      // Find the distance between now an the count down date
+      var distance = new Date().getTime()
+              - <?php
+$last = substr($var1, strrpos($var1, "["), 20);
 echo substr($last, 1, strrpos($last, ",") - 1);
 ?>
-        ;
+      ;
+              // Time calculations for days, hours, minutes and seconds
+              var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+              var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+              var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+              var vorText = 'vor: ';
+              if (days > 0) {
+      vorText = vorText + days + " T ";
+      }
+      if (hours > 0) {
+      vorText = vorText + hours + " h ";
+      }
+      if (distance > 60000 && days == 0) {
+      vorText = vorText + minutes + " min ";
+      }
+      if (days == 0) {
+      vorText = vorText + seconds + "s <br/>";
+      }
 
-        // Time calculations for days, hours, minutes and seconds
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        var vorText = 'vor: ';
-        if (hours > 0) {
-          vorText = vorText + hours + " h ";
-        }
-        if (distance > 60000) {
-          vorText = vorText + minutes + " min ";
-        }
-        vorText = vorText + seconds + "s <br/>";
-        
-      <?php
-          if ($_GET['box'] == true) {
-            for ($i = 1; $i <= $varNo; $i++) {
-              echo 'document.getElementById("since' . $i . '").innerHTML = vorText;';
-            }    
-          echo '}, 1000);';          
-          }
-          else {
-            echo '}, 1000000000000000);';
-          }
-      ?>
+    <?php
+    if ($_GET['box'] == true) {
+      for ($i = 1; $i <= $varNo; $i++) {
+        echo 'document.getElementById("since' . $i . '").innerHTML = vorText;';
+      }
+      echo '}, 1000);';
+    } else {
+      echo '}, 1000000000000000);';
+    }
+    ?>
     </script>
-    
+
   </head>
   <body>
 
     <div id="header">
       <img src="./img/iSpindel.svg" height="40px"/>
-      iSpindel: DIY elektronische Bierspindel
-      <div id="header_right">
-    <?php echo $_GET['name']; ?>
-      </div>
+      iSpindel: <?php echo $_GET['name']; ?>
     </div>
 
     <script src="include/highcharts.js"></script>
@@ -338,5 +334,9 @@ echo substr($last, 1, strrpos($last, ",") - 1);
               ';
     }
     ?>
+    <div id="footer">
+      iSpindel: DIY elektronische Bierspindel <a href="https://github.com/universam1/iSpindel">https://github.com/universam1/iSpindel</a>
+    </div>
+
   </body>
 </html>

@@ -9,13 +9,13 @@
   For the original project itself, see: https://github.com/universam1/iSpindel  
   
   Tozzi (stephan@sschreiber.de), Mar 15 2017
-  kiki, May 06 2017
+  kiki, May 10 2017
 */
 
 // ****************************************************************************
 // ToDo: Abfrage auf reset nicht richtig, wenn default = true (boolean <-> gefüllt)
 // ToDo: function getChartValues, getChartValuesPlato entfernen
-// ToDo: function getCurrentValues parametergesteurt
+// ToDo: function getCurrentValues parametergesteuert
 // ToDo: Plato4-Berechnung in DB verlagern und getValues verwenden
 // ****************************************************************************
 
@@ -32,25 +32,33 @@ function delLastChar($string="")
 //
 // ****************************************************************************
 // Get values from database for selected spindle, between now and timeframe in hours ago
-function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset, $var1='Angle', $var2='', $var3='')
+function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset, $date='', $var1='Angle', $var2='', $var3='')
 {
-   if ($reset)
-   {
-   $where="WHERE Name = '".$iSpindleID."' 
-                  AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
-   }  
-   else
-   {
-  $where ="WHERE Name = '".$iSpindleID."' 
-            AND Timestamp >= date_sub(NOW(), INTERVAL ".$timeFrameHours." HOUR) 
-            and Timestamp <= NOW()";
-   }  
+   if ($date != '') {$reset = 0;}
+ 
+   if ($reset==1) {
+   $where_part = "AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
+   }
+   else if ($date != '') {
+   $where_part = "AND Timestamp  > (Select max(Timestamp) FROM Data WHERE 
+     unix_timestamp(Timestamp) < unix_timestamp(STR_TO_DATE('".$date."', '%d.%m.%Y')) AND ResetFlag = true AND Name = '".$iSpindleID."')
+     AND Timestamp  < (Select min(Timestamp) FROM Data  WHERE 
+     unix_timestamp(Timestamp) > unix_timestamp(STR_TO_DATE('".$date."', '%d.%m.%Y')) AND ResetFlag = true AND Name = '".$iSpindleID."')";
+   }
+   else if ($timeFrameHours != '') {
+   $where_part = "AND Timestamp >= date_sub(NOW(), INTERVAL ". $timeFrameHours ." HOUR) 
+                  and Timestamp <= NOW()";                  
+   }
+   else {$where_part="";}
+   
+                         
    $var2 != '' ? $var2sel = ','.$var2 : $var2sel = '';
    $var3 != '' ? $var3sel = ','.$var3 : $var3sel = '';
    
-   $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, $var1" . $var2sel  . $var3sel
-                         ." FROM Data " 
-                         .$where 
+   $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, $var1" . $var2sel . $var3sel
+                         ." FROM Data "
+                         . "WHERE Name = '".$iSpindleID."' "
+                         . $where_part
                          ." ORDER BY Timestamp ASC") or die(mysql_error());
   // retrieve number of rows
   $rows = mysql_num_rows($q_sql);

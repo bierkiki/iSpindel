@@ -8,7 +8,7 @@ include_once("include/common_db.php");
 include_once("include/common_db_query.php");
 
 // Check GET parameters (for now: Spindle name and Timeframe to display) 
-if(!isset($_GET['name'])) $_GET['name'] = 'iSpindel000'; else $_GET['name'] = $_GET['name'];
+if(!isset($_GET['name'])) $_GET['name'] = defaultName; else $_GET['name'] = $_GET['name'];
 
 list($time, $temperature, $angle, $battery) = getCurrentValues($_GET['name']);
 

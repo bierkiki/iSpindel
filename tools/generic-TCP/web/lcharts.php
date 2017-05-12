@@ -1,23 +1,27 @@
 <?php
-/* 
+/*
   Show up to 3 linecharts
   GET Parameters:
-  hours = number of hours before now() to be displayed
-  name = iSpindle name
-  reset = true, false defines start of timeline
-  var1  = Name of first variable for first chart
-  var2  = Name of variable for second chart
-  var3  = Name of variable for third chart
-  
+  hours : number of hours before now() to be displayed
+  name  : iSpindle name
+  reset : true, false defines start of timeline
+  var1  : Name of first variable for first chart
+  var2  : Name of variable for second chart
+  var3  : Name of variable for third chart
+  date  : Datum (TT.MM.YYYY): timeline of chart is from max reset-timestamp < date to min reset-timestamp < date
+
   Shows mySQL iSpindle data on the browser as a graph via Highcharts:
   http://www.highcharts.com
- 
-  For the original project itself, see: https://github.com/universam1/iSpindel  
 
-  kiki, May 06 2017
-*/
+  For the original project itself, see: https://github.com/universam1/iSpindel
+
+  kiki, May 10 2017
+ */
 
 // ****************************************************************************
+//
+// erste Vorabversion !!!!
+//
 // ToDo: style, html-header auslagern
 // ToDo: kein chart, wenn Variable doppelt
 // ToDo: Schleife für $var1, $var2, $var3
@@ -31,11 +35,12 @@ include_once("include/common_frontend.php");
 
 // Check GET parameters
 if (!isset($_GET['hours'])) {$_GET['hours'] = defaultTimePeriod;} else {$_GET['hours'] = $_GET['hours'];}
-if (!isset($_GET['name']))  {$_GET['name'] = defaultName;}        else {$_GET['name']  = $_GET['name'];}
+if (!isset($_GET['name']))  {$_GET['name']  = defaultName;}       else {$_GET['name']  = $_GET['name'];}
 if (!isset($_GET['reset'])) {$_GET['reset'] = defaultReset;}      else {$_GET['reset'] = $_GET['reset'];}
-if (!isset($_GET['var1']))  {$_GET['var1'] = defaultVar;}         else {$_GET['var1']  = $_GET['var1'];}
-if (!isset($_GET['var2']))  {$_GET['var2'] = '';}                 else {$_GET['var2']  = $_GET['var2'];}
-if (!isset($_GET['var3']))  {$_GET['var3'] = '';}                 else {$_GET['var3']  = $_GET['var3'];}
+if (!isset($_GET['var1']))  {$_GET['var1']  = defaultVar;}        else {$_GET['var1']  = $_GET['var1'];}
+if (!isset($_GET['var2']))  {$_GET['var2']  = '';}                else {$_GET['var2']  = $_GET['var2'];}
+if (!isset($_GET['var3']))  {$_GET['var3']  = '';}                else {$_GET['var3']  = $_GET['var3'];}
+if (!isset($_GET['date' ])) {$_GET['date']  = '';}                else {$_GET['date']  = $_GET['date'];}
 
 //
 // ToDo: kein chart, wenn Variable doppelt
@@ -58,18 +63,18 @@ if ($_GET['var2'] == '') {
 }
 
 // check, whether variables are known:
-check_known_variable($_GET['var1']); 
-check_known_variable($_GET['var2']); 
-check_known_variable($_GET['var3']); 
+check_known_variable($_GET['var1']);
+check_known_variable($_GET['var2']);
+check_known_variable($_GET['var3']);
 
 // Database query:
 if ($varNo == 3) {
-  list($var1, $var2, $var3) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['var1'], $_GET['var2'], $_GET['var3']);
+  list($var1, $var2, $var3) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['var1'], $_GET['var2'], $_GET['var3']);
 } else
 if ($varNo == 2) {
-  list($var1, $var2) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['var1'], $_GET['var2']);
+  list($var1, $var2) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['var1'], $_GET['var2']);
 } else {
-  list($var1) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['var1']);
+  list($var1) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['var1']);
 }
 ?>
 
@@ -85,7 +90,6 @@ if ($varNo == 2) {
     <script src="include/moment-timezone-with-data.js"></script>
 
     <link rel="stylesheet" href="./css/fonts.css" type="text/css"/>
-    <script src="include/highcharts.js"></script>
 
     <style>
       html {
@@ -94,24 +98,22 @@ if ($varNo == 2) {
         color: #5e5e5e;
       }
       #header {
-        font-size: 25px;
         margin-top: 10px;
         margin-left: 1%;
         margin-right: 1%;
         height:50px;
+        font-size: 25px;
         padding-top: 10px;
-        padding-left: 10px;
+        padding-left: 25px;
         background:#93E579;
         border-radius: 7px;
       }
       #footer {
-        font-size: 25px;
         margin-top: 10px;
         margin-left: 1%;
         margin-right: 1%;
-        height:50px;
-        padding-top: 10px;
-        padding-left: 10px;
+        font-size: 25px;
+        padding: 7px 25px 7px 25px;
         background:#93E579;
         border-radius: 7px;
       }
@@ -120,12 +122,15 @@ if ($varNo == 2) {
         margin-left: 1%;
         margin-right: 1%;
         height:100%;
-        position:relative;
+
       }
       .spacer {
         height: 10px;
       }
-
+      a {color:#5e5e5e;
+         text-decoration: none;
+         float:right;
+      }
       .highcharts-root{
         border-radius: 7px;
       }
@@ -151,22 +156,18 @@ if ($varNo == 2) {
             },
             title: {
               align: 'left',
-              text: '<?php echo $_GET['name']; ?>',
+              text: '<?php echo $_GET['name']; ?>'
             },
 
             xAxis: {
               type: 'datetime',
-              gridLineWidth: 1,
-              title: {
-                text: 'Uhrzeit'
-              }
+              gridLineWidth: 1
             },
 
             yAxis: [{
-                startOnTick: false,
-                endOnTick: false,
-                /*min: 0,
-                 max: 90,*/
+                startOnTick: true,
+                endOnTick: true,
+                gridLineWidth: 1,
                 labels: {
                   align: 'left',
                   x: 3,
@@ -178,25 +179,25 @@ if ($varNo == 2) {
               crosshairs: [true, true]
             },
             legend: {
-              enabled: true
+              enabled: false
             },
             credits: {
               enabled: false
             }
           });
 
-          <?php
-          if ($varNo > 0) {
-            echo lchartTmpl($renderTo = "chart1", $txtDE = $dictArray[$_GET['var1']]["txtDE"], $Einheit = $dictArray[$_GET['var1']]["Einheit"], $var = $var1);
-          }
-          if ($varNo > 1) {
-            echo lchartTmpl($renderTo = "chart2", $txtDE = $dictArray[$_GET['var2']]["txtDE"], $Einheit = $dictArray[$_GET['var2']]["Einheit"], $var = $var2);
-          }
+    <?php
+    if ($varNo > 0) {
+      echo lchartTmpl($renderTo = "chart1", $txtDE = $dictArray[$_GET['var1']]["txtDE"], $Einheit = $dictArray[$_GET['var1']]["Einheit"], $var = $var1);
+    }
+    if ($varNo > 1) {
+      echo lchartTmpl($renderTo = "chart2", $txtDE = $dictArray[$_GET['var2']]["txtDE"], $Einheit = $dictArray[$_GET['var2']]["Einheit"], $var = $var2);
+    }
 
-          if ($varNo > 2) {
-            echo lchartTmpl($renderTo = "chart3", $txtDE = $dictArray[$_GET['var3']]["txtDE"], $Einheit = $dictArray[$_GET['var3']]["Einheit"], $var = $var3);
-          }
-          ?>
+    if ($varNo > 2) {
+      echo lchartTmpl($renderTo = "chart3", $txtDE = $dictArray[$_GET['var3']]["txtDE"], $Einheit = $dictArray[$_GET['var3']]["Einheit"], $var = $var3);
+    }
+    ?>
         });
       });
     </script>
@@ -204,21 +205,19 @@ if ($varNo == 2) {
   <body>
 
     <div id="header">
-      <img src="./img/iSpindel.svg" height="40px">
-      iSpindel: DIY elektronische Bierspindel
+      <img src="./img/iSpindel.svg" height="40px"/>
+      iSpindel: <?php echo $_GET['name']; ?>
     </div>
 
     <script src="include/highcharts.js"></script>
-    <?php
-    for ($i = 1; $i <= 3; $i++) {
-      if ($varNo >= $i) {
-        echo '<div class="wrapper">
+<?php
+for ($i = 1; $i <= $varNo; $i++) {
+  echo '<div class="wrapper">
                 <div id="chart' . $i . '" ></div>
               </div>
               <div class="spacer"></div>
               ';
-      }
-    }
-    ?>
+}
+?>
   </body>
 </html>

@@ -8,7 +8,7 @@
  
   For the original project itself, see: https://github.com/universam1/iSpindel  
 
-  kiki, May 06 2017
+  kiki, May 09 2017
 */
 
 // ****************************************************************************
@@ -22,22 +22,24 @@
 $knownVar = array('Angle', 'Temperature', 'Battery', 'Gravity');
 $dictArray = array(
   'Angle' => array(
-      'txtDE' => 'Winkel [°]',
+      'txtDE' => 'Winkel',
       'Einheit' => '°'
   ),
   'Temperature' => array(
-      'txtDE' => 'Temperatur [°C]',
+      'txtDE' => 'Temperatur',
       'Einheit' => '°C'
   ),
   'Battery' => array(
-      'txtDE' => 'Batteriespannung [V]',
+      'txtDE' => 'Batteriespannung',
       'Einheit' => 'V'
   ),
   'Gravity' => array(
-          'txtDE' => 'Restextrakt [°P]',
+          'txtDE' => 'Restextrakt',
           'Einheit' => '°P'
   )
 );
+
+
 
 
 // ****************************************************************************
@@ -68,24 +70,30 @@ function lchartTmpl($renderTo, $txtDE, $Einheit, $var) {
         },
         yAxis: [{
           title:{
-            text :'" . $txtDE . "'
-          },
+            text :''
+          }
+                    ,
           labels: {
             formatter: function(){
-              return this.value +'" . $Einheit . "'
+              return this.value +'" . $Einheit . "';
             }
           }
+          
         }],
         tooltip:{
           formatter: function(){
-            if(this.series.name == '" . $txtDE . "') {
+            if(this.series.name === '" . $txtDE . "') {
               return '<b>" . $txtDE . "</b> um '+ Highcharts.dateFormat('%H:%M', new Date(this.x)) +' Uhr:  '+ this.y + '" . $Einheit . "';
             }
           }
         },
+        title: {
+          text :'" . $txtDE . "'
+        },
         series:[{
-          name: '" . $txtDE . "'   ,
           data: [" . $var . "],
+          /* name: ' ', */
+          name: '" . $txtDE . "'   ,
           color: '#C31028',
           marker:{
             symbol: 'square',
