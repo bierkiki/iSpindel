@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>iSpindle Test</title>
+  <link rel="stylesheet" href="./css/fonts.css" type="text/css"/>
+   <style>
+      html {
+        font-family: "Open Sans", "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+        background:#5e5e5e;
+        color: #5e5e5e;
+      }
+      #header {
+        margin-top: 10px;
+        margin-left: 1%;
+        margin-right: 1%;
+        height:50px;
+        font-size: 25px;
+        padding-top: 10px;
+        padding-left: 25px;
+        background:#93E579;
+        border-radius: 7px;
+      }
+      #footer {
+        margin-top: 10px;
+        margin-left: 1%;
+        margin-right: 1%;
+        font-size: 25px;
+        padding: 7px 25px 7px 25px;
+        background:#93E579;
+        border-radius: 7px;
+      }
+      #wrapper {
+        margin-top: 10px;
+        padding-top: 1%;
+        padding-bottom: 1%;
+        margin-left: 1%;
+        margin-right: 1%;
+        background:white;
+        color: #5e5e5e;
+        border-radius: 7px;
+       
+      }
+      .spacer {
+        height: 10px;
+      }
+      a {text-decoration: none;
+        color: #5e5e5e;
+      }
+      .highcharts-root{
+        border-radius: 7px;
+      }
+      .highcharts-title {
+        fill: #5e5e5e  !Important;
+      }
+    </style>
+
+
+</head>
+<body>
+      <div id="header">
+      <img src="./img/iSpindel.svg" height="40px"/>
+      iSpindel: DIY elektronische Bierspindel
+    </div>
+
+<!-- ***********************************************************************
+     *** Hier kann man die am meisten verwenbdeten Aufrufe eintragen
+     ******************************************************************* -->
+ 
+<div id="wrapper">
+<ul>
+  <li><a href="./lchartsb.php?name=mybier&var1=Gravity&var2=Temperature&var3=Battery&box=1&reset=1"         >aktuelle Gärung   </a></li>
+  <li><a href="./lchartsb.php?name=mybier&var1=Gravity&var2=Temperature&var3=Battery&box=0&hours="          >alles             </a></li>
+  <li><a href="./lchartsb.php?name=mybier&var1=Gravity&var2=Temperature&var3=Battery&box=1&date=5.5.2017"   >letzte Gärung Mai </a></li>
+  
+<ul>
+</div>
+<div id="footer">
+  iSpindel: DIY elektronische Bierspindel <a href="https://github.com/universam1/iSpindel">https://github.com/universam1/iSpindel</a>
+</div>
+
+ 
+</body>
+</html>
