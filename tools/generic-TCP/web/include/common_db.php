@@ -14,9 +14,11 @@ if(is_resource($conn))
   mysql_query("SET CHARACTER SET 'ascii'", $conn);
 }
  
-define("defaultTimePeriod", 24); // Timeframe for chart
-define("defaultReset",  0);  // Flag for Timeframe for chart, 
-define("defaultName", 'iSpindel000');  // Flag for Timeframe for chart, 
-define("defaultVar", 'Angle');  // Variable to be displayed
-define("defaultBox", 0);              // Flag, whether boxes are displayed
+define("defaultTimePeriod", 24);      // Timeframe for chart
+define("defaultReset",  0);           // Flag for Timeframe for chart, 
+define("defaultName", 'iSpindel000'); // Flag for Timeframe for chart, 
+define("defaultVar", 'Angle');        // Variable to be displayed
+define("defaultBox", 1);              // Flag, whether boxes are displayed
+define("defaultTab", 0);              // Flag, whether data table is displayed
+
 ?>
