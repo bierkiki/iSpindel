@@ -81,7 +81,7 @@ if ($varNo == 2) {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>iSpindle Data</title>
+    <title><?php echo 'iSpindel: ' . $_GET['name'];?></title>
     <meta http-equiv="refresh" content="120">
     <meta name="Keywords" content="iSpindle, iSpindel, Chart, genericTCP">
     <meta name="Description" content="iSpindle Fermentation Chart">
@@ -89,6 +89,7 @@ if ($varNo == 2) {
     <script src="include/moment.min.js"></script>
     <script src="include/moment-timezone-with-data.js"></script>
 
+    <link rel="shortcut icon" href="http:./img/iSpindel.svg"/>
     <link rel="stylesheet" href="./css/fonts.css" type="text/css"/>
 
     <style>

@@ -79,7 +79,7 @@ if ($varNo == 2) {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>iSpindle Data</title>
+    <title><?php echo 'iSpindel: ' . $_GET['name'];?></title>
     <meta http-equiv="refresh" content="120">
     <meta name="Keywords" content="iSpindle, iSpindel, Chart, genericTCP">
     <meta name="Description" content="iSpindle Fermentation Chart">
@@ -87,6 +87,7 @@ if ($varNo == 2) {
     <script src="include/moment.min.js"></script>
     <script src="include/moment-timezone-with-data.js"></script>
 
+    <link rel="shortcut icon" href="http:./img/iSpindel.svg"/>
     <link rel="stylesheet" href="./css/fonts.css" type="text/css"/>
 
     <style>
@@ -110,7 +111,7 @@ if ($varNo == 2) {
         margin-top: 10px;
         margin-left: 1%;
         margin-right: 1%;
-        font-size: 20px;
+        font-size: 25px;
         padding: 7px 25px 7px 25px;
         background:#93E579;
         border-radius: 7px;        
@@ -334,9 +335,8 @@ echo substr($last, 1, strrpos($last, ",") - 1);
               ';
     }
     ?>
-
     <div id="footer">
-      iSpindel: DIY elektronische Bierspindel <a href="https://github.com/universam1/iSpindel">github.com/universam1/iSpindel</a>
+      iSpindel: DIY elektronische Bierspindel <a href="https://github.com/universam1/iSpindel">https://github.com/universam1/iSpindel</a>
     </div>
 
   </body>
