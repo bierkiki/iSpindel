@@ -30,12 +30,12 @@ include_once("include/common_frontend.php");
 
 // Check GET parameters (for now: Spindle name and Timeframe to display)
 // Check GET parameters (for now: Spindle name and Timeframe to display)
-if (!isset($_GET['hours'])) {$_GET['hours'] = defaultTimePeriod;} else {$_GET['hours'] = $_GET['hours'];}
-if (!isset($_GET['name']))  {$_GET['name']  = defaultName;}        else {$_GET['name']  = $_GET['name'];}
-if (!isset($_GET['reset'])) {$_GET['reset'] = defaultReset;}      else {$_GET['reset'] = $_GET['reset'];}
-if (!isset($_GET['var1']))  {$_GET['var1']  = defaultVar;}         else {$_GET['var1']  = $_GET['var1'];}
-if (!isset($_GET['var2']))  {$_GET['var2']  = '';}                 else {$_GET['var2']  = $_GET['var2'];}
-if (!isset($_GET['date' ]))  {$_GET['date'] = '';}                else {$_GET['date']  = $_GET['date'];}
+if (!isset($_GET['hours'])) {$_GET['hours'] = defaultTimePeriod;} 
+if (!isset($_GET['name']))  {$_GET['name']  = defaultName;}       
+if (!isset($_GET['reset'])) {$_GET['reset'] = defaultReset;}      
+if (!isset($_GET['var1']))  {$_GET['var1']  = defaultVar;}        
+if (!isset($_GET['var2']))  {$_GET['var2']  = '';}                
+if (!isset($_GET['date' ])) {$_GET['date']  = '';}                
 
 // check var1, default is Angle
 if ($_GET['var1'] == '') {
@@ -49,15 +49,21 @@ if ($_GET['var2'] == '') {
   $varNo = 2;
 }
 
+/* schön ist anders : */
+$newName = array(
+        'varlist' => $_GET['var1'].','. $_GET['var2']
+        );
+$_GET = $_GET + $newName;
+
 // check, whether variables are known:
 check_known_variable($_GET['var1']);
 check_known_variable($_GET['var2']);
 
 // Database query:
-if ($varNo > 1)
-  list($var1, $var2) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['var1'], $_GET['var2']);
+if ($varNo = 2)
+  list($var1, $var2) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['varlist']);
 else
-  list($var1) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['var1']);
+  list($var1) = getValues($_GET['name'], $_GET['hours'], $_GET['reset'], $_GET['date'], $_GET['varlist']);
 ?>
 
 <!DOCTYPE html>
