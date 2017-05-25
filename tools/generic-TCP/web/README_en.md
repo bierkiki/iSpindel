@@ -1,25 +1,44 @@
-# Charts From Local Server 
+# Charts From Own Server 
 
 While exporting CSVs or directly accessing the database via ODBC from, for example, Excel, is fine for data analysis, we'll definitely also want a quick way to take a glance at the current fermentation.
 So, here are a few essential charts, developed using [highcharts](http://www.highcharts.com), browser accessible.
-Especially nice in Firefox fullscreen mode on a Raspi touch display. Just put some bookmarks on the Raspi Desktop.
+Especially nice in Firefox fullscreen mode on a Raspi touch display or via smartphone. Just put some bookmarks on the Raspi Desktop.
 
 We'll need a working [install](../INSTALL_en.md) of the backend, including mySQL and Apache2.
 
 My goal was to implement a solution as simple yet effective as possible.
 
-I've implemented these basic charts:
+Following charts are available:  
+**lchart.php**: One or two variables in a linechart, similar to previous  angle.php and plato.php   
+**dashboard.php**: Linecharts for each variable (up to 7), last measurement (optional), data table (optional)  
+**plato4.php**: - deprecated as per firmware 5.x - gravity and temperature over the past x hours (calibration record required as explained below)  
+**status.php**: - battery, tilt and temperature of the specified iSpindle
 
-* angle.php - tilt and temperature over the past x hours
-* plato4.php - deprecated as per firmware 5.x - gravity and temperature over the past x hours (calibration record required as explained below)
-* plato.php - gravity and temperature over the past x hours, requires firmware 5.x
-* battery.php - current battery voltage
-* status.php - battery, tilt and temperature of the specified iSpindle
+
+Following parameters are available:  
+**name**: Name of iSpindle     
+**varlist** (for dashboard.php): comma separated list of variables to be displayed, e.g. Temperature, Battery and Gravity (need firmware 5.x), Angle and ResetFlag   
+**var1** and **var 2** (for lchart,php): First and second variable to be displayed  
+**box** (for dashboard.php): [0 or 1], boxes with last measurement are displayed
+
+For definition of selected time line:  
+**hours**: Last x hours will be displayed  
+**reset**: [0 or 1]: Timeline starts at timestamp of last ResetFlag  
+**date** : (TT.MM.YYYY): Timeline is between two ResetFlags around the given date.  
+If you call reset_now.php at start and end of fermentation, with date you can show past fermentations, which were around the given date. If you forgot the call of reset_now.php you can edit the Resetflags via http://meinraspi/phpmyadmin.    
+
 
 In order to show these charts we pass arguments via GET in order to be able to bookmark the URLs:
 
-* http://raspi/iSpindle/angle.php?name=MySpindle1&hours=24
-* http://raspi/iSpindle/status.php?name=MySpindle2
+* http://raspi/iSpindle/dashboard.php?name=mybier&varlist=Angle,Temperature,Battery&box=1&reset=1
+* http://raspi/iSpindle/dashboard.php?varlist=Angle,Temperature,Battery
+* http://raspi/iSpindle/dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017
+* http://raspi/iSpindle/lchart.php?var1=Angle&var2=Temperature&date=5.5.2017
+* http://raspi/iSpindle/status.php?hours=24
+
+
+The file index_MUSTER.html contains more examples. 
+At the bottom of index_MUSTER.html you can edit your individual calls. If you save your edited file as index.html it's sufficient to request http://raspi/iSpindle/ to get your start page.
 
 reset_now defines a timestamp (start of fermentation) and the graph shows only the entries after this timestamp:
 * http://meinraspi/iSpindle/reset_now.php?name=MeineSpindel2

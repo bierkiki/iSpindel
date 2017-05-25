@@ -9,14 +9,12 @@
   For the original project itself, see: https://github.com/universam1/iSpindel  
   
   Tozzi (stephan@sschreiber.de), Mar 15 2017
-  kiki, May 10 2017
+  kiki, May 19 2017
 */
 
 // ****************************************************************************
-// ToDo: Abfrage auf reset nicht richtig, wenn default = true (boolean <-> gefüllt)
-// ToDo: function getChartValues, getChartValuesPlato entfernen
-// ToDo: function getCurrentValues parametergesteuert
-// ToDo: Plato4-Berechnung in DB verlagern und getValues verwenden
+// idears: 
+// Plato4-Berechnung in DB verlagern und getValues verwenden
 // ****************************************************************************
 
 // ****************************************************************************
@@ -32,7 +30,7 @@ function delLastChar($string="")
 //
 // ****************************************************************************
 // Get values from database for selected spindle, between now and timeframe in hours ago
-function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset, $date='', $var1='Angle', $var2='', $var3='')
+function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset, $date='', $varlist='Angle')
 {
    if ($date != '') {$reset = 0;}
  
@@ -51,139 +49,124 @@ function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $
    }
    else {$where_part="";}
    
-                         
-   $var2 != '' ? $var2sel = ','.$var2 : $var2sel = '';
-   $var3 != '' ? $var3sel = ','.$var3 : $var3sel = '';
-   
-   $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, $var1" . $var2sel . $var3sel
+   // variables to array
+   $varArray = explode(',', $_GET['varlist']);
+   $varNo = count($varArray);
+  
+   $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, " . $varlist
                          ." FROM Data "
                          . "WHERE Name = '".$iSpindleID."' "
                          . $where_part
                          ." ORDER BY Timestamp ASC") or die(mysql_error());
+
   // retrieve number of rows
   $rows = mysql_num_rows($q_sql);
-  if ($rows > 0)
-  {
-    $val1 = '';
-    $val2 = '';
-    $val3 = '';
-    
+  
+  if ($rows > 0) {
+    for ($i = 0; $i < $varNo; $i++) {
+      $val[$i]  = '';
+    }
+ 
+ 
+ 
     // retrieve and store the values as CSV lists for HighCharts
-    while($r_row = mysql_fetch_array($q_sql))
-    {
+    while($r_row = mysql_fetch_array($q_sql)) {
       $jsTime = $r_row['unixtime'] * 1000;
-      $val1         .= '['.$jsTime.', '.$r_row[$var1].'],';
-      if ($var2 != '') {
-        $val2         .= '['.$jsTime.', '.$r_row[$var2].'],';
-      }
-      if ($var3 != '') {
-        $val3         .= '['.$jsTime.', '.$r_row[$var3].'],';
+
+      for ($i = 0; $i < $varNo; $i++) {
+        $val[$i]  .= '['.$jsTime.', '.$r_row[$i+1].'],';
       }
     }
     
     // remove last comma from each CSV
-    $val1         = delLastChar($val1);
-    $val2         = delLastChar($val2);
-    $val3         = delLastChar($val3);
-    
-    if ($var2 != '' and $var3 == '') {
-      return array($val1, $val2);
+    for ($i = 0; $i < $varNo; $i++) {
+      $val[$i]  = delLastChar($val[$i]);
+      }
+	    
+    $ret = array();
+    for ($i = 0; $i < $varNo; $i++) {
+      array_push($ret, $val[$i]);
     }
-    else if ($var2 != '' and $var3 != '') {
-      return array($val1, $val2, $val3);
-    }
-    else {
-       return array($val1);
-    }   
+    return $ret;
   }
 }
- 
-// ****************************************************************************
-//
+
 // ****************************************************************************
 // Get values from database for selected spindle, between now and timeframe in hours ago
-function getChartValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
+function getValuesAllVars($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset, $date='')
 {
-   if ($reset)
-   {
-   $where="WHERE Name = '".$iSpindleID."' 
-                  AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
-   }  
-   else
-   {
-  $where ="WHERE Name = '".$iSpindleID."' 
-            AND Timestamp >= date_sub(NOW(), INTERVAL ".$timeFrameHours." HOUR) 
-            and Timestamp <= NOW()";
-   }  
-   $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, temperature, angle
-                         FROM Data " 
-                         .$where 
-                         ." ORDER BY Timestamp ASC") or die(mysql_error());
-                         
+
+
+   $q_sql = mysql_query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA ='iSpindle' and TABLE_NAME = 'Data'") or die(mysql_error());
+
   // retrieve number of rows
   $rows = mysql_num_rows($q_sql);
-  if ($rows > 0)
-  {
-    $valAngle = '';
-    $valTemperature = '';
-    
+  while($r_row = mysql_fetch_array($q_sql)) {
+  echo $r_row . '        ';
+  } 
+
+
+   if ($date != '') {$reset = 0;}
+ 
+   if ($reset==1) {
+   $where_part = "AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
+   }
+   else if ($date != '') {
+   $where_part = "AND Timestamp  > (Select max(Timestamp) FROM Data WHERE 
+     unix_timestamp(Timestamp) < unix_timestamp(STR_TO_DATE('".$date."', '%d.%m.%Y')) AND ResetFlag = true AND Name = '".$iSpindleID."')
+     AND Timestamp  < (Select min(Timestamp) FROM Data  WHERE 
+     unix_timestamp(Timestamp) > unix_timestamp(STR_TO_DATE('".$date."', '%d.%m.%Y')) AND ResetFlag = true AND Name = '".$iSpindleID."')";
+   }
+   else if ($timeFrameHours != '') {
+   $where_part = "AND Timestamp >= date_sub(NOW(), INTERVAL ". $timeFrameHours ." HOUR) 
+                  and Timestamp <= NOW()";                  
+   }
+   else {$where_part="";}
+   
+   // variables to array
+   $varArray = explode(',', $_GET['varlist']);
+   $varNo = count($varArray);
+ 
+   $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, " . $varlist
+                         ." FROM Data "
+                         . "WHERE Name = '".$iSpindleID."' "
+                         . $where_part
+                         ." ORDER BY Timestamp ASC") or die(mysql_error());
+
+  // retrieve number of rows
+  $rows = mysql_num_rows($q_sql);
+  
+  if ($rows > 0) {
+    for ($i = 0; $i < $varNo; $i++) {
+      $val[$i]  = '';
+    }
+ 
+ 
+ 
     // retrieve and store the values as CSV lists for HighCharts
-    while($r_row = mysql_fetch_array($q_sql))
-    {
+    while($r_row = mysql_fetch_array($q_sql)) {
       $jsTime = $r_row['unixtime'] * 1000;
-      $valAngle         .= '['.$jsTime.', '.$r_row['angle'].'],';
-      $valTemperature   .= '['.$jsTime.', '.$r_row['temperature'].'],';
+
+      for ($i = 0; $i < $varNo; $i++) {
+        $val[$i]  .= '['.$jsTime.', '.$r_row[$i+1].'],';
+      }
     }
     
     // remove last comma from each CSV
-    $valAngle         = delLastChar($valAngle);
-    $valTemperature   = delLastChar($valTemperature);
-    return array($valAngle, $valTemperature);
-  }
-}
-// ****************************************************************************
-//
-// ****************************************************************************
-// Get values from database including gravity (Fw 5.0.1 required) for selected spindle, between now and timeframe in hours ago
-function getChartValuesPlato($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $reset=defaultReset)
-{
-   if ($reset)
-   {
-   $where="WHERE Name = '".$iSpindleID."' 
-                  AND Timestamp > (Select max(Timestamp) FROM Data  WHERE ResetFlag = true AND Name = '".$iSpindleID."')";
-   }  
-   else
-   {
-  $where ="WHERE Name = '".$iSpindleID."' 
-            AND Timestamp >= date_sub(NOW(), INTERVAL ".$timeFrameHours." HOUR) 
-            and Timestamp <= NOW()";
-   }  
-  $q_sql = mysql_query("SELECT UNIX_TIMESTAMP(Timestamp) as unixtime, temperature, angle, gravity
-                          FROM Data " 
-                         .$where 
-                         ." ORDER BY Timestamp ASC") or die(mysql_error());
-  // retrieve number of rows
-  $rows = mysql_num_rows($q_sql);
-  if ($rows > 0)
-  {
-    $valAngle = '';
-    $valTemperature = '';
-    $valGravity = '';
-    // retrieve and store the values as CSV lists for HighCharts
-    while($r_row = mysql_fetch_array($q_sql))
-    {
-      $jsTime = $r_row['unixtime'] * 1000;
-      $valAngle         .= '['.$jsTime.', '.$r_row['angle'].'],';
-      $valTemperature   .= '['.$jsTime.', '.$r_row['temperature'].'],';
-      $valGravity       .= '['.$jsTime.', '.$r_row['gravity'].'],';
+    for ($i = 0; $i < $varNo; $i++) {
+      $val[$i]  = delLastChar($val[$i]);
+      }
+	    
+    $ret = array();
+    for ($i = 0; $i < $varNo; $i++) {
+      array_push($ret, $val[$i]);
     }
-    // remove last comma from each CSV
-    $valAngle         = delLastChar($valAngle);
-    $valTemperature   = delLastChar($valTemperature);
-    $valGravity       = delLastChar($valGravity);
-    return array($valAngle, $valTemperature, $valGravity);
+    return $ret;
   }
 }
+
+
+ 
 // ****************************************************************************
 //
 // ****************************************************************************

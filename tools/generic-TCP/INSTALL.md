@@ -103,6 +103,20 @@ Ab sofort steht die MySQL Datenbank für die iSpindel zur Verfügung.
 Das Server Skript hierzu wie im [README](./README.md) beschrieben anpassen und neu starten.
 
 
+### Optional: Zugriff über Internet einrichten (empfohlen)
+Um über das Internet auch von außerhalb z.B. mit dem Smartphone von unterwegs auf die Grafiken zugreifen zu können, 
+bietet sich an, ein dynamischen Domain Name System (dynDNS) zu verwenden.
+
+2 Schritte sind hierfür notwendig:
+1. Anmelden bei einem dynDNS-Provider.
+Es gibt einige Provider, die dynDNS auch bei kostenfreien Accounts anbieten. Diese leiten dann die Browseranfrage aus dem Internet auf das eigene Heimwerk um (kostenfrei z.B. bei http://www.twodns.de/, https://www.spdyn.de, www.selfhost.de).
+2. Portfreigabe und dynamisches DNS im seinem Router einrichten, so dass die Anfragen von außen auf den Raspberry umgeleitet werden.
+
+Im Internet finden sich viele Anleitungen hierzu, z.B.   
+https://www.netzwelt.de/dns/72507-dyndns-so-rechner-aussen-erreichbar.html   
+http://www.easy-network.de/dyndns-einrichten.html   
+https://www.pcwelt.de/ratgeber/Dynamisches-DNS-im-Eigenbau-8932556.html   
+
 ### Optional: Samba installieren (empfohlen):
 
 	sudo apt-get install samba samba-common-bin

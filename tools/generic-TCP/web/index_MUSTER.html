@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title><?php echo 'iSpindel: ' . $_GET['name'];?></title>
-  <meta charset="utf-8">
-  <link rel="shortcut icon" href="http:./img/iSpindel.svg"/>
-  <link rel="stylesheet" href="./css/fonts.css" type="text/css"/>
-   <style>
+  <head>
+    <meta charset="utf-8">
+    <meta name="Keywords" content="iSpindle, iSpindel, Chart, genericTCP">
+    <meta name="Description" content="iSpindle Fermentation Chart">
+
+    <title>iSpindel</title>
+    <link rel="shortcut icon" href="http:./img/iSpindel.svg"/>
+    <link rel="stylesheet" href="./css/fonts.css" type="text/css"/>
+    <style>
       html {
         font-family: "Open Sans", "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
         background:#5e5e5e;
@@ -40,13 +43,15 @@
         background:white;
         color: #5e5e5e;
         border-radius: 7px;
-       
       }
       .spacer {
         height: 10px;
       }
       a {text-decoration: none;
-        color: #5e5e5e;
+         color: #5e5e5e;
+      }
+      li{
+        font-size: 25px;        
       }
       .highcharts-root{
         border-radius: 7px;
@@ -57,30 +62,33 @@
     </style>
 
 
-</head>
-<body>
-      <div id="header">
+  </head>
+  <body>
+    <div id="header">
       <img src="./img/iSpindel.svg" height="40px"/>
       iSpindel: DIY elektronische Bierspindel
     </div>
 
-<!-- ***********************************************************************
-     *** Hier kann man die am meisten verwenbdeten Aufrufe eintragen
-     ******************************************************************* -->
- 
-<div id="wrapper">
-<ul>
-  <li><a href="./lchartsb.php?name=mybier&var1=Gravity&var2=Temperature&var3=Battery&box=1&reset=1"             >aktuelle Gärung   </a></li>
-  <li><a href="./lchartsb.php?name=mybier&var1=Gravity&var2=Temperature&var3=Battery&box=0&hours="               >alles             </a></li>
-  <li><a href="./lchartsb.php?name=mybier&var1=Gravity&var2=Temperature&var3=Battery&box=1&date=5.5.2017"        >letzte Gärung Mai </a></li>
-  <li><a href="./lchartflex.php?name=mybier&var1=Gravity&var2=Temperature&var3=Battery&box=1&date=5.5.2017&tab=1">letzte Gärung Mai, mit Tabelle, frühe Testversion</a></li>
-  
-</ul>
-</div>
-<div id="footer">
-  iSpindel: DIY elektronische Bierspindel <a href="https://github.com/universam1/iSpindel">https://github.com/universam1/iSpindel</a>
-</div>
+    <!-- ********************************************************
+         *** Hier kann man die individuellen Aufrufe eintragen
+         ******************************************************** -->
+    <div id="wrapper">
+      <ul>
+        <li><a href="./dashboard.php?name=mybier&varlist=Angle,Temperature,Battery&box=1&reset=1"         >aktuelle Gärung, mit letztem Messwert</a></li>
+        <li><a href="./dashboard.php?name=mybier&varlist=Angle,Temperature,Battery&box=1&reset=1&tab=1"   >aktuelle Gärung mit Datentabelle</a></li>
+        <li><a href="./dashboard.php?varlist=Angle,Temperature,Battery"                                   >einige Parameter mittels common_db.php gesetzt</a></li>
+        <li><a href="./dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017"         >Gärung Mai</a></li>
+        <li><a href="./dashboard.php?name=mybier&varlist=Gravity,Temperature,Battery&box=0&hours=&reset=0">gesamter Zeitraum</a></li>
+        <li><a href="./dashboard.php?name=mybier&varlist=ResetFlag&box=0&hours=&reset=0"                  >gesetzte ResetFlags über gesamten Zeitraum</a></li>
+        <li><a href="./dashboard.php?name=mybier&varlist=*&date=5.5.2017"                                 >Gärung Mai, keine Grafiken, nur komplette Datentabelle</a></li>
+        <li><a href="./lchart.php?name=mybier&var1=Angle&var2=Temperature&date=5.5.2017"                  >Gärung Mai, Winkel und Temperatur in einer Grafik</a></li>
+        <li><a href="./plato4.php?name=mybier&hours=500"                                                  >plato4.php für iSpindel Version 4</a></li>
+        <li><a href="./status.php?name=mybier&hours=500"                                                  >Status der Batterie, Temperatur und Winkel als Messuhren</a></li>
+      </ul>
+    </div>
 
- 
-</body>
+    <div id="footer">
+      iSpindel: DIY elektronische Bierspindel <a href="https://github.com/universam1/iSpindel">https://github.com/universam1/iSpindel</a>
+    </div>
+  </body>
 </html>

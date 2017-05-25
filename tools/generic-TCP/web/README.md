@@ -1,9 +1,9 @@
-# Diagramme vom lokalen Server 
+# Diagramme vom eigenen Server 
 
 [English Version](README_en.md)
 
-OK, der lokale Server ist im Einsatz und funktioniert, jetzt wollen wir auch die Daten darstellen können, notfalls auch ohne Internetverbindung.     
-Zu was war das Ganze sonst gut?  
+OK, der eigene Server ist im Einsatz und funktioniert, jetzt wollen wir auch die Daten darstellen können, notfalls auch ohne Internetverbindung.     
+
 Man kann zwar jederzeit per Excel eine CSV Datei importieren oder auch über ODBC auf die Datenbank zugreifen, aber das ist ein wenig umständlich.
 Also musste noch eine einfache Methode her, um direkt mit dem Browser Diagramme anzeigen zu können.
 
@@ -17,25 +17,42 @@ Die Sommerzeit Umstellung sollte also automatisch berücksichtigt werden, werden
 Ansonsten immer noch treu dem Motto, so einfach aber effektiv wie möglich... ;)      
 Es steckt nach wie vor wahrlich kein Hexenwerk dahinter.
 
-Ich habe insgesamt folgende verschiedene Diagramme implementiert:
+Folgende Diagramme stehen zur Verfügung:   
+**lchart.php**: bis zu zwei Variablen in einer Liniengrafik, ähnlich zu bisherigen angle.php und plato.php   
+**dashboard.php**:Liniengrafike je Variable (bis zu 7) , letzte Messwerte (optional), Tabelle (optional)  
+**plato4.php**: Restextrakt **nach alter Methode kalibrierter iSpindel** (Firmware 4.x der iSpindel)   
+**status.php**: aktueller Status der Batterie, Temperatur und Winkel als Messuhren   
 
-* angle.php - zeigt Winkel und Temperatur für vergangene X Stunden
-* plato.php - zeigt Restextrakt und Temperatur für vergangene X Stunden bei **kalibrierter** iSpindel (ab Firmware 5.x)
-* plato4.php - zeigt Restextrakt und Temperatur für vergangene X Stunden bei **nach alter Methode kalibrierter iSpindel** (Firmware 4.x)
-* battery.php - zeigt den Ladezustand einer Spindel
-* status.php - zeigt Ladezustand, Winkel und Temperatur einer Spindel, wie aktuell gemessen
+
+Der Aufruf der Diagramme wird flexibel über die Parameter-Übergabe gesteuert:   
+**name**: Name der iSpindel   
+**varlist** (bei dashboard.php): Kommagetrennte Liste der anzuzeigenden Variablen, z.B. Temperature, Battery und Gravity (erst ab Version 5 der iSpindel), Angle  und ResetFlag   
+**var1** und **var 2** (bei lchart,php): Erste und zweite anzuzeigende Variablen   
+**box** (bei dashboard.php): [0 oder 1], Boxen mit dem zuletzt gemessenen Wert werden angezeigt  
+
+Zur Definition der Zeitachse stehen folgende Paramerter zur Verfügung   
+**hours**: Es werden die letzten x Stunden angezeigt   
+**reset**: [0 oder 1]: Es werden die Werte seit dem letzten ResetFlag angezeigt   
+**date** : (TT.MM.YYYY): Es werden die Werte zwischen 2 ResetFlags angezeigt.    
+So kann man, wenn man am Anfang und am Ende der Gärung das reset_now.php aufgerufen hat, auch vergangene Sude anzeigen, wenn man ein Datum, das zwischen dem Anfang und dem Ende der Gärung liegt, angibt. Das ResetFlag kann man auch im Nachhinein über http://meinraspi/phpmyadmin editieren.  
+
 
 Um das entsprechende Diagramm aufzurufen werden die Parameter per GET Methode übergeben.
 Beispiele:
 
-* http://meinraspi/iSpindle/angle.php?name=MeineSpindel1&hours=24
-* http://meinraspi/iSpindle/status.php?name=MeineSpindel2
+* http://meinraspi/iSpindle/dashboard.php?name=mybier&varlist=Angle,Temperature,Battery&box=1&reset=1
+* http://meinraspi/iSpindle/dashboard.php?varlist=Angle,Temperature,Battery
+* http://meinraspi/iSpindle/dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017
+* http://meinraspi/iSpindle/lchart.php?var1=Angle&var2=Temperature&date=5.5.2017
+* http://meinraspi/iSpindle/status.php?hours=24
 
-Mit reset_now kann man einen Zeitstempel (Beginn der Gärung) festlegen und bei der Grafik alle Werte nach diesem Zeitstempel anzeigen:
+
+In der Datei index_MUSTER.html sind weitere Beispielaufrufe aufgeführt. 
+Man kann in dieser Datei seine individuellen Aufrufe unten eintragen und die Datei unter index.html bei sich abspeichern. Dann genügt als Aufruf http://meinraspi/iSpindle/ , um zu der individuellen Einstiegsseite zu gelangen.
+
+
+Mit **reset_now** kann man einen Zeitstempel (Beginn oder Ende der Gärung) festlegen und bei der Grafik alle Werte nach diesem Zeitstempel anzeigen, oder eine vergangene Gäung mit Angabe des Parameters date:
 * http://meinraspi/iSpindle/reset_now.php?name=MeineSpindel2
-* http://meinraspi/iSpindle/angle.php?name=MeineSpindel2&reset=true
-
-Dafür kann man dann Lesezeichen anlegen und so auch auf einem Touchscreen schnell zur gewünschten Ansicht kommen.     
 
 Ich hoffe, damit einen sinnvollen Grundstein gelegt zu haben, auf dem Ihr aufbauen könnt.
 Für mich persönlich genügt das jetzt erst mal so wie es ist, aber es gibt natürlich eine Menge Verbesserungspotenzial.

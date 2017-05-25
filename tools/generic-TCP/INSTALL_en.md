@@ -102,6 +102,25 @@ Configure it as explained here: [README](./README_en.md).
 See section below on how to install it.
 
 
+
+### Optional: Access via internet (Recommended)
+You can use dynamic Domain Name System (dynDNS) to access the charts on your Raspberry from the internet via your smart phone.
+
+2 tasks are necessary:  
+1st create an account at a dyn DNS Provider. There are a lot of Providers, which provide a free account for dynamic DNS.  
+2nd In the configuration of your router you have to open one Port an enable dynDNS  
+
+Providers with accounts for free are for example:  
+http://freedns.afraid.org/     
+http://no-ip.com/  
+http://www.dnsdynamic.org/       
+
+There are a lot of instructions for using dynDNS in the web:  
+http://www.makeuseof.com/tag/connect-home-network-dyndns/  
+https://en.avm.de/service/fritzbox/fritzbox-7390/knowledge-base/publication/show/30_Setting-up-dynamic-DNS-in-the-FRITZ-Box/  
+http://www.noip.com/support/knowledgebase/how-to-configure-ddns-in-router/
+
+
 ### Optional: Install Samba (Recommended):
 
 	sudo apt-get install samba samba-common-bin
