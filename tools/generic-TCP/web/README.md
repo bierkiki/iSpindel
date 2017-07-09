@@ -19,16 +19,17 @@ Es steckt nach wie vor wahrlich kein Hexenwerk dahinter.
 
 Folgende Diagramme stehen zur Verfügung:   
 **lchart.php**: bis zu zwei Variablen in einer Liniengrafik, ähnlich zu bisherigen angle.php und plato.php   
-**dashboard.php**:Liniengrafike je Variable (bis zu 7) , letzte Messwerte (optional), Tabelle (optional)  
+**dashboard.php**: Liniengrafiken mit bis zu 7 Variablen, letzte Messwerte (optional), Tabelle (optional)  
 **plato4.php**: Restextrakt **nach alter Methode kalibrierter iSpindel** (Firmware 4.x der iSpindel)   
 **status.php**: aktueller Status der Batterie, Temperatur und Winkel als Messuhren   
 
 
 Der Aufruf der Diagramme wird flexibel über die Parameter-Übergabe gesteuert:   
 **name**: Name der iSpindel   
-**varlist** (bei dashboard.php): Kommagetrennte Liste der anzuzeigenden Variablen, z.B. Temperature, Battery und Gravity (erst ab Version 5 der iSpindel), Angle  und ResetFlag   
+**varlist** (bei dashboard.php): Kommagetrennte Liste der anzuzeigenden Variablen, z.B. Temperature, Battery und Gravity (erst ab Version 5 der iSpindel), Angle und ResetFlag   
 **var1** und **var 2** (bei lchart,php): Erste und zweite anzuzeigende Variablen   
 **box** (bei dashboard.php): [0 oder 1], Boxen mit dem zuletzt gemessenen Wert werden angezeigt  
+**maxis** (bei dashboard.php): [0 oder 1], 0: mehrere Grafiken mit je einer Variablen; 1: eine Grafik mit mehreren y-Achsen
 
 Zur Definition der Zeitachse stehen folgende Paramerter zur Verfügung   
 **hours**: Es werden die letzten x Stunden angezeigt   
@@ -43,6 +44,7 @@ Beispiele:
 * http://meinraspi/iSpindle/dashboard.php?name=mybier&varlist=Angle,Temperature,Battery&box=1&reset=1
 * http://meinraspi/iSpindle/dashboard.php?varlist=Angle,Temperature,Battery
 * http://meinraspi/iSpindle/dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017
+* http://meinraspi/iSpindle/dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017&maxis=0
 * http://meinraspi/iSpindle/lchart.php?var1=Angle&var2=Temperature&date=5.5.2017
 * http://meinraspi/iSpindle/status.php?hours=24
 
@@ -63,6 +65,21 @@ Um Sam da zu entlasten, würde ich Euch aber bitten, dafür mein [Repository](ht
 Ich teste das dann und gebe die Änderungen an Sam weiter.
 
 Die externen Libraries habe ich mit hier aufgenommen, um die Daten auch ohne Internet darstellen zu können.
+
+#### Standardbelegung der Parameter der Grafikskripte:
+Für einige Parameter können Standardwerte festgelegt werden, so dass diese nicht mehr direkt bei Aufruf des Skripts angegeben werden müssen.
+Diese können in der Datei include/config_frontend.php editiert werden:
+
+      // **************************************************************************** 
+      // configure defaults for charts here:
+      // **************************************************************************** 
+      define("defaultTimePeriod", 24);      // Timeframe for chart
+      define("defaultReset",  0);           // Flag for Timeframe for chart 
+      define("defaultName", 'iSpindel000'); // Name of iSpindle
+      define("defaultVar", 'Angle');        // Variable to be displayed
+      define("defaultBox", 1);              // Flag, whether boxes are displayed
+      define("defaultTab", 0);              // Flag, whether data table is displayed
+      define("defaultMaxis", 0);            // Flag, whether multiple axis are displayed
 
 ### Noch ein paar Hinweise zur Installation:
 #### Apache2:
@@ -114,5 +131,6 @@ Am besten die Werte mit phpMyAdmin eintragen, oder:
 Die Spindel Hardware ID kann aus der Daten Tabelle ermittelt werden, sie wird von der Spindel mitgeschickt.    
 
 Viel Spaß,     
-Tozzi       
-<stephan@sschreiber.de>
+Tozzi <stephan@sschreiber.de>
+und 
+kiki

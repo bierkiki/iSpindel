@@ -15,24 +15,23 @@
 
   For the original project itself, see: https://github.com/universam1/iSpindel
 
-  kiki, May 19 2017
+  kiki, July 7 2017
  */
 
 // ****************************************************************************
 // ideas:
-// Different iSpindle one page with one chart for each ispindle
-// integrate lcharts.php (2 variables in one chart
+// Different iSpindles: one page with one chart for each ispindle
 // avoid limit of max 8 variables
 // optimize css
-// validation og parameters
+// validation of parameters
 // instead of table Data a view with more columns (TRE, EVG, ...)
 // labels also in English, ... 
-// Formular for configuration
 // ****************************************************************************
 
 include_once("include/common_db.php");
 include_once("include/common_db_query.php");
 include_once("include/common_frontend.php");
+include_once("include/config_frontend.php");
 
 // Check GET parameters
 if (!isset($_GET['hours']))    {$_GET['hours']   = defaultTimePeriod;}
@@ -42,6 +41,7 @@ if (!isset($_GET['varlist']))  {$_GET['varlist'] = defaultVar;}
 if (!isset($_GET['box' ]))     {$_GET['box']     = defaultBox;}       
 if (!isset($_GET['tab' ]))     {$_GET['tab']     = defaultTab;}       
 if (!isset($_GET['date' ]))    {$_GET['date']    = '';}               
+if (!isset($_GET['maxis' ]))   {$_GET['maxis']   = defaultMaxis;}       
 
 $star = 0;
 if ($_GET['varlist'] == '*') {
@@ -256,43 +256,53 @@ if ($varNo == 8) {
         $(document).ready(function ()
         {
           Highcharts.setOptions({
-            global: {
-              timezone: 'Europe/Berlin'
-            },
-            lang: {
-              shortMonths: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']
-            },
-            title: {
-              align: 'left'
-            },
-            xAxis: {
-              type: 'datetime',
-              gridLineWidth: 1
-            },
-            yAxis: [{
-                startOnTick: true,
-                endOnTick: true,
-                gridLineWidth: 1,
-                labels: {
-                  align: 'left',
-                  x: 3,
-                  y: 16
-                },
-                showFirstLabel: false
-              }],
-            tooltip: {
-              crosshairs: [true, true]
-            },
-            legend: {
-              enabled: false
-            },
-            credits: {
-              enabled: false
-            }
-          });
           <?php
-            for ($i = 0; $i < $varNo; $i++) {
-              echo lchartTmpl($renderTo = "chart" . $i, $txtDE = $dictArray[$varArray[$i]]["txtDE"], $Einheit = $dictArray[$varArray[$i]]["Einheit"], $var = $values[$i]);
+            echo chartOptions(); 
+          ?>
+          });
+          
+          <?php
+      
+            if ($_GET['maxis'] == 0){
+              for ($i = 0; $i < $varNo; $i++) {
+                echo "$('#chart".$i."').highcharts({"
+                  .'    chart:{'
+                  ."      renderTo: 'chart".$i."'"
+                  .'}';
+              
+              
+                echo lchartTmpl($txtDE = $dictArray[$varArray[$i]]["txtDE"], $Einheit = $dictArray[$varArray[$i]]["Einheit"], $var = $values[$i] );
+                echo ',series:[';
+                echo lchartTmplSeries($txtDE = $dictArray[$varArray[$i]]["txtDE"], $var = $values[$i], $index = 0);
+                echo ']'; // series
+                echo '});';
+              }
+            }
+            else {
+              echo "$('#chart0').highcharts({"
+                .'    chart:{'
+                ."      renderTo: 'chart0'"
+                .'}'
+                ;
+              echo ",title: {
+                        text :'" . $_GET['name'] . "'
+                     }";
+              
+              //*** yAxis ***   
+              echo ' ,yAxis: [ ';
+              for ($i = 0; $i < $varNo; $i++) {
+                echo lchartTmplyAxis($txtDE = $dictArray[$varArray[$i]]["txtDE"], $Einheit = $dictArray[$varArray[$i]]["Einheit"], $var = $values[$i], $index = $i);
+                 if ($i < $varNo - 1){echo ',';}
+              }   
+              echo ']'; //yAxis
+              
+              echo ',series:[';
+              for ($i = 0; $i < $varNo; $i++) {
+                echo lchartTmplSeries($txtDE = $dictArray[$varArray[$i]]["txtDE"], $var = $values[$i], $index = $i);
+                 if ($i < $varNo - 1){echo ',';}
+              }   
+              echo ']'; // series
+              echo '});';
             }
           ?>
         });
@@ -379,7 +389,13 @@ if ($varNo == 8) {
       /**************
        *** charts ***
        **************/
-      for ($i = 0; $i < $varNo; $i++) {
+      if ($_GET['maxis'] == 1) {
+        $ChartsCount = 1;
+      }
+      else {
+        $ChartsCount = $varNo;
+      }
+      for ($i = 0; $i < $ChartsCount; $i++) {
         echo '<div class="wrapper">
                 <div id="chart' . $i . '" ></div>
             </div>

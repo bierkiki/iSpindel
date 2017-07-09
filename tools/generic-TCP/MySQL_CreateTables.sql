@@ -5,7 +5,7 @@ CREATE TABLE `Data` (
        `Angle` double NOT NULL,
        `Temperature` double NOT NULL,
        `Battery` double NOT NULL,
-       `ResetFlag` boolean,
+       `ResetFlag` boolean  NOT NULL DEFAULT 0,
        `Gravity` double NOT NULL DEFAULT 0,
 	PRIMARY KEY (`Timestamp`, `Name`, `ID`)
 	) 

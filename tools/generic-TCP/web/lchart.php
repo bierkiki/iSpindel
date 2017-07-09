@@ -27,6 +27,7 @@
 include_once("include/common_db.php");
 include_once("include/common_db_query.php");
 include_once("include/common_frontend.php");
+include_once("include/config_frontend.php");
 
 // Check GET parameters (for now: Spindle name and Timeframe to display)
 // Check GET parameters (for now: Spindle name and Timeframe to display)

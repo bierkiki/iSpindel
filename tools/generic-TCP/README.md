@@ -94,7 +94,7 @@ Um die Tabelle mit den grundlegenden Feldern anzulegen, verwendet man am besten 
 		'Angle' double NOT NULL,
 		'Temperature' double NOT NULL,
 		'Battery' double NOT NULL,
-		'ResetFlag' boolean,
+		'ResetFlag' boolean  NOT NULL DEFAULT 0,
 		'Gravity' double NOT NULL,
 		PRIMARY KEY ('Timestamp', 'Name', 'ID')
 	) 

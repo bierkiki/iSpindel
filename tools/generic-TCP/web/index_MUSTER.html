@@ -76,17 +76,36 @@
       <ul>
         <li><a href="./dashboard.php?name=mybier&varlist=Angle,Temperature,Battery&box=1&reset=1"         >aktuelle Gärung, mit letztem Messwert</a></li>
         <li><a href="./dashboard.php?name=mybier&varlist=Angle,Temperature,Battery&box=1&reset=1&tab=1"   >aktuelle Gärung mit Datentabelle</a></li>
-        <li><a href="./dashboard.php?varlist=Angle,Temperature,Battery"                                   >einige Parameter mittels common_db.php gesetzt</a></li>
-        <li><a href="./dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017"         >Gärung Mai</a></li>
+        <li><a href="./dashboard.php?varlist=Angle,Temperature,Battery"                                   >einige Parameter mittels config_frontend.php gesetzt</a></li>
+        <li><a href="./dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017&maxis=1" >Gärung Mai, eine Grafik, mehrere y-Achsen</a></li>
+        <li><a href="./dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017&maxis=0" >Gärung Mai, eine Grafik je Variable</a></li>
         <li><a href="./dashboard.php?name=mybier&varlist=Gravity,Temperature,Battery&box=0&hours=&reset=0">gesamter Zeitraum</a></li>
         <li><a href="./dashboard.php?name=mybier&varlist=ResetFlag&box=0&hours=&reset=0"                  >gesetzte ResetFlags über gesamten Zeitraum</a></li>
         <li><a href="./dashboard.php?name=mybier&varlist=*&date=5.5.2017"                                 >Gärung Mai, keine Grafiken, nur komplette Datentabelle</a></li>
-        <li><a href="./lchart.php?name=mybier&var1=Angle&var2=Temperature&date=5.5.2017"                  >Gärung Mai, Winkel und Temperatur in einer Grafik</a></li>
+        <li><a href="./dashboard.php?name=mybier&varlist=Angle,Temperature&box=0&date=5.5.2017&maxis=1"   >Gärung Mai, Winkel und Temperatur in einer Grafik</a></li>
+        <li><a href="./lchart.php?name=mybier&var1=Angle&var2=Temperature&date=5.5.2017"                  >lchart.php Gärung Mai, Winkel und Temperatur in einer Grafik</a></li>
         <li><a href="./plato4.php?name=mybier&hours=500"                                                  >plato4.php für iSpindel Version 4</a></li>
         <li><a href="./status.php?name=mybier&hours=500"                                                  >Status der Batterie, Temperatur und Winkel als Messuhren</a></li>
+        <li><a href="./reset_now.php?name=mybier"                                                         >ResetFlag setzen</a></li>
       </ul>
     </div>
-
+    
+    <!-- ********************************************************
+         *** Zur Info werden die Parameter angezeigt
+         ******************************************************** -->
+    <div id="wrapper">
+    <h2>Parameter:</h2>
+      <ul>
+        <li>name: Name der iSpindel</li>
+        <li>varlist (bei dashboard.php): Kommagetrennte Liste der anzuzeigenden Variablen, z.B. Temperature, Battery und Gravity (erst ab Version 5 der iSpindel), Angle und ResetFlag</li>
+        <li>var1 und var2 (bei lchart,php): Erste und zweite anzuzeigende Variablen</li>
+        <li>box (bei dashboard.php): [0 oder 1], Boxen mit dem zuletzt gemessenen Wert werden angezeigt</li>
+        <li>maxis (bei dashboard.php): [0 oder 1], 0: mehrere Grafiken mit je einer Variablen; 1: eine Grafik mit mehreren y-Achsen</li>
+        <li>hours: Es werden die letzten x Stunden angezeigt</li>   
+        <li>reset: [0 oder 1]: Es werden die Werte seit dem letzten ResetFlag angezeigt</li>
+        <li>date: (TT.MM.YYYY): Es werden die Werte zwischen 2 ResetFlags angezeigt</li>
+      </ul>
+    </div>
     <div id="footer">
       iSpindel: DIY elektronische Bierspindel <a href="https://github.com/universam1/iSpindel">https://github.com/universam1/iSpindel</a>
     </div>

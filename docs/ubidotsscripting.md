@@ -10,7 +10,7 @@ So lassen sich z.B. die Daten einer Variable komplett löchen, wenn sie nicht me
 - https://ubidots.com/docs/api/#rest-api-reference
 
 ## Curl Script zur Datenlöschung
-- Download [ZIP-Datei](https://github.com/universam1/iSpindel/raw/master/tools/delete_all_values_ispindel.zip) 
+- Download [ZIP-Datei](https://github.com/universam1/iSpindel/raw/master/tools/ubidots/delete_all_values_ispindel.zip) 
 - Enthaltener Ordner an beliebiger Stelle entpacken 
 - Die enthaltene "delete_all_values_ispindel.bat" mit dem Editor bearbeiten, dort dann statt
 
@@ -25,7 +25,7 @@ So lassen sich z.B. die Daten einer Variable komplett löchen, wenn sie nicht me
 - Die "delete_all_values_ispindel.bat" starten und die Variable(n) sollten leer sein.
 
 ## Curl Script zur Anzeige der letzten Messwerte
-- Download [ZIP-Datei](https://github.com/universam1/iSpindel/raw/master/tools/get_five_values_ispindel.zip) 
+- Download [ZIP-Datei](https://github.com/universam1/iSpindel/raw/master/tools/ubidots/get_five_values_ispindel.zip) 
 - Enthaltener Ordner an beliebiger Stelle entpacken 
 - Die enthaltene "get_five_values_ispindel.bat" mit dem Editor bearbeiten, dort dann statt
 

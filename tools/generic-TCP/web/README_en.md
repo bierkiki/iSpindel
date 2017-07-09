@@ -10,7 +10,7 @@ My goal was to implement a solution as simple yet effective as possible.
 
 Following charts are available:  
 **lchart.php**: One or two variables in a linechart, similar to previous  angle.php and plato.php   
-**dashboard.php**: Linecharts for each variable (up to 7), last measurement (optional), data table (optional)  
+**dashboard.php**: Line charts for up to 7 variables, last measurement (optional), data table (optional)  
 **plato4.php**: - deprecated as per firmware 5.x - gravity and temperature over the past x hours (calibration record required as explained below)  
 **status.php**: - battery, tilt and temperature of the specified iSpindle
 
@@ -20,6 +20,7 @@ Following parameters are available:
 **varlist** (for dashboard.php): comma separated list of variables to be displayed, e.g. Temperature, Battery and Gravity (need firmware 5.x), Angle and ResetFlag   
 **var1** and **var 2** (for lchart,php): First and second variable to be displayed  
 **box** (for dashboard.php): [0 or 1], boxes with last measurement are displayed
+**maxis** (for dashboard.php): [0 or 1], 0: one chart for each variable; 1: one chart with multiple y-axis
 
 For definition of selected time line:  
 **hours**: Last x hours will be displayed  
@@ -33,6 +34,7 @@ In order to show these charts we pass arguments via GET in order to be able to b
 * http://raspi/iSpindle/dashboard.php?name=mybier&varlist=Angle,Temperature,Battery&box=1&reset=1
 * http://raspi/iSpindle/dashboard.php?varlist=Angle,Temperature,Battery
 * http://raspi/iSpindle/dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017
+* http://raspi/iSpindle/dashboard.php?name=mybier&varlist=Gravity,Temperature&box=0&date=5.5.2017&maxis=0
 * http://raspi/iSpindle/lchart.php?var1=Angle&var2=Temperature&date=5.5.2017
 * http://raspi/iSpindle/status.php?hours=24
 
@@ -43,6 +45,22 @@ At the bottom of index_MUSTER.html you can edit your individual calls. If you sa
 reset_now defines a timestamp (start of fermentation) and the graph shows only the entries after this timestamp:
 * http://meinraspi/iSpindle/reset_now.php?name=MeineSpindel2
 * http://meinraspi/iSpindle/angle.php?name=MeineSpindel2&reset=true
+
+#### Defaults for parameter of the scrips for charts:
+You can define defaults for some parameters for the charts in the file include/config_frontend.php:
+
+      // **************************************************************************** 
+      // configure defaults for charts here:
+      // **************************************************************************** 
+      define("defaultTimePeriod", 24);      // Timeframe for chart
+      define("defaultReset",  0);           // Flag for Timeframe for chart 
+      define("defaultName", 'iSpindel000'); // Name of iSpindle
+      define("defaultVar", 'Angle');        // Variable to be displayed
+      define("defaultBox", 1);              // Flag, whether boxes are displayed
+      define("defaultTab", 0);              // Flag, whether data table is displayed
+      define("defaultMaxis", 0);            // Flag, whether multiple axis are displayed
+
+
 
 I hope I've built sort of a foundation with templates for lots of future enhancements.
 I am aware that there's probably a ton of things I could have solved more elegantly and there's room for improvement galore.     
@@ -98,3 +116,5 @@ You could enter these using phpMyAdmin, or on a mysql prompt, you'd do:
 
 Have Fun,     
 Tozzi (stephan@sschreiber.de)
+and
+kiki

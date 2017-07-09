@@ -94,7 +94,7 @@ In order to create a table inside your MySQL database accordingly, use this SQL 
 		'Angle' double NOT NULL,
 		'Temperature' double NOT NULL,
 		'Battery' double NOT NULL,
-		'ResetFlag' boolean,
+		'ResetFlag' boolean  NOT NULL DEFAULT 0,
 		'Gravity' double NOT NULL,
 		PRIMARY KEY ('Timestamp', 'Name', 'ID')
 	) 

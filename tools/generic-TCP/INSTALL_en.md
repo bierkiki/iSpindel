@@ -14,7 +14,7 @@ This is already taken into account if you newly install this and follow the inst
 To use the charts with the parameter Resetflag, you'll need to add a new column to the Data table:
 
 	USE iSpindle;
-	ALTER TABLE Data ADD ResetFlag boolean;
+	ALTER TABLE Data ADD ResetFlag boolean NOT NULL DEFAULT 0;
 
 This is already taken into account if you newly install this and follow the instructions below.
 

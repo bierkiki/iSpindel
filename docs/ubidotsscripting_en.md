@@ -1,4 +1,4 @@
-# Scripting for Ubidots
+﻿# Scripting for Ubidots
 
 ## Curl
 Curl is an open source command line tool. For example, HTML messages can be To Ubidots.- https://curl.haxx.se/
@@ -9,7 +9,7 @@ For example, Completely delete the data of a variable when it is no longer requi
 - https://ubidots.com/docs/api/#rest-api-reference
 
 ## Curl Script for data erasure
-- Download [ZIP file](https://github.com/universam1/iSpindel/raw/master/tools/delete_all_values_ispindel.zip) 
+- Download [ZIP file](https://github.com/universam1/iSpindel/raw/master/tools/ubidots/delete_all_values_ispindel.zip) 
 - Unpack the folder at any point
 - Edit the contained "delete_all_values_ispindel.bat" with the editor, then take place instead
 
@@ -24,7 +24,7 @@ For example, Completely delete the data of a variable when it is no longer requi
 - Start "delete_all_values_ispindel.bat" and the variable (s) should be empty.
 
 ## Curl Script to display the last measured values
-- Download [ZIP file](https://github.com/universam1/iSpindel/raw/master/tools/get_five_values_ispindel.zip) 
+- Download [ZIP file](https://github.com/universam1/iSpindel/raw/master/tools/ubidots/get_five_values_ispindel.zip) 
 - Unpack the folder at any point
 - Edit the contained "get_five_values_ispindel.bat" with the editor, then take place instead
 

@@ -9,12 +9,14 @@
   For the original project itself, see: https://github.com/universam1/iSpindel  
   
   Tozzi (stephan@sschreiber.de), Mar 15 2017
-  kiki, May 19 2017
+  kiki, July 7 2017
 */
 
 // ****************************************************************************
 // idears: 
 // Plato4-Berechnung in DB verlagern und getValues verwenden
+// ResetFlag default 0 und Migration:
+// UPDATE Data SET ResetFlag = 0 WHERE ResetFlag is null;
 // ****************************************************************************
 
 // ****************************************************************************
@@ -82,7 +84,7 @@ function getValues($iSpindleID=defaultName, $timeFrameHours=defaultTimePeriod, $
     for ($i = 0; $i < $varNo; $i++) {
       $val[$i]  = delLastChar($val[$i]);
       }
-	    
+     
     $ret = array();
     for ($i = 0; $i < $varNo; $i++) {
       array_push($ret, $val[$i]);
@@ -156,7 +158,7 @@ function getValuesAllVars($iSpindleID=defaultName, $timeFrameHours=defaultTimePe
     for ($i = 0; $i < $varNo; $i++) {
       $val[$i]  = delLastChar($val[$i]);
       }
-	    
+     
     $ret = array();
     for ($i = 0; $i < $varNo; $i++) {
       array_push($ret, $val[$i]);
