@@ -15,7 +15,7 @@
 
 ### Resistors
 
-- 470 ohms between D0 and RST
+- BAT43 or better schottky diode (cathode to D0) or 330 ohms resistor between D0 and RST
 - 230k ohms of A0 -> 5V
 - 4k7 ohms of D6 -> 5V
 
@@ -28,7 +28,6 @@ VCC and 5V
 ### Wemos
 
 - Remove the input diode (short circuit via Lipomodul!)
-- Connect Wemos USB + 5V (above diode pin) to Lipomodul `+ IN` (optionally to load over the Wemos)
 - Switch / Reed between + 5V and Lipomodul `+ OUT`
 - GND -> GND
 

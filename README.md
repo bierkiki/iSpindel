@@ -4,14 +4,14 @@ iSpindel | iSpindle
 **DIY elektronische Bierspindel | electronic Hydrometer**
 ***https://universam1.github.io/iSpindel***
 
-***
+
 
 If you like that project please vote for the [Hackaday.io *2017 Prize List*](https://hackaday.io/project/20421-ispindel)
-===================
+
 
 Check out *IOT DEVICE PULLS ITS WEIGHT IN HOME BREWING* at http://hackaday.com/2017/03/01/iot-device-pulls-its-weight-in-home-brewing/
 
-***
+
 
 ## Documentation in other languages
 
@@ -27,20 +27,23 @@ Check out *IOT DEVICE PULLS ITS WEIGHT IN HOME BREWING* at http://hackaday.com/2
 
 ## News
 
-
-> # 01.05.2017 Major Firmware update to 5.x   
->## Calculate the Gravity 
+> 05.07.2017 Workaround for BrewPiLess    
+> ### 30.06.2017 Mentioned in http://preview.mailerlite.com/g6n5p3/660851237247259035/r2w6/    
+> ### 22.05.2017 updated build docs    
+> ### 22.05.2017 switching build environment to platform.io    
+> ## 01.05.2017 Major Firmware update to 5.x   
+>### Calculate the Gravity 
 >now within the iSpindel by expression evaluation! The conversion polynom can be stored per iSpindel and sends as an additional metric (without a unit). Therefore, whether Plato or SG is prefered is up to the user defined polynom. There are two variable available `tilt` and `temp`  
 >
->[Kalibrierung](docs/Kalibrierung.md)   
+>### [Kalibrierung](docs/Kalibrierung.md)   
 >
 >![Gravity](pics/polynom.png)
 >
->### Firmware update via Web Browser 
->now possible - [Firmware flashen](docs/Firmware.md)
+>### [Firmware update via Web Browser](docs/Firmware.md)
 >
 >![Offset](pics/firmware.png)
->## Calibrate Hardware Offset 
+
+>### Calibrate Hardware Offset 
 >of the MPU6050. Greatly reduces the issue of not perfectly aligned sensor.
 >
 >![Offset](pics/offset.png)

@@ -15,7 +15,7 @@
 
 ### Widerstände
 
-- 470 Ohm zwischen D0 und RST
+- BAT43 Schottky Diode (Kathode zu D0) oder 330 Ohm zwischen D0 und RST
 - 230k Ohm von A0 --> 5V
 - 4k7 Ohm von D6 --> 5V
 
@@ -28,7 +28,6 @@
 ### Wemos
 
 - Eingangs - Diode entfernen (Kurzschluss über Lipomodul!)
-- Wemos USB +5V (obiger Diodenpin) an Lipomodul `+IN` verbinden (optional um über den Wemos zu laden)
 - Schalter / Reed zwischen +5V und Lipomodul `+OUT`
 - GND --> GND
 
